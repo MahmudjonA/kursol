@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
+import 'package:lms_system/core/route/rout_generator.dart';
+import 'package:lms_system/features/auth/presentation/pages/forget_reset_password/pages/forgot_password.dart';
 import '../../../../../core/common/colors/app_colors.dart';
 import '../../../../../core/common/sizes/sizes.dart';
 import '../../../../../core/common/widgets/app_bar/action_app_bar_wg.dart';
@@ -127,8 +129,13 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                   TextButton(
                     onPressed: () {
-                      // context.go(RoutePaths.forgotPassword);
-                      Navigator.pushNamed(context, RouteNames.forgotPassword);
+                      // Navigator.pushNamed(context, RouteNames.forgotPassword);
+
+                      // !
+                      AppRoute.go(ForgotPassword());
+                      // !
+
+
                     },
                     child: Text(
                       "Forgot password?",

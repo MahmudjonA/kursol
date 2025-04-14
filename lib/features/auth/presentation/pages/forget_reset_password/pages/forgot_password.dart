@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lms_system/core/route/rout_generator.dart';
+import 'package:lms_system/features/auth/presentation/pages/forget_reset_password/pages/send_code_forgot_password.dart';
+import 'package:lms_system/features/auth/presentation/pages/sign_in/sign_in_page.dart';
 import '../../../../../../core/common/colors/app_colors.dart';
 import '../../../../../../core/common/widgets/app_bar/action_app_bar_wg.dart';
 import '../../../../../../core/common/widgets/buttons/default_button_wg.dart';
@@ -23,7 +26,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       appBar: ActionAppBarWg(
         onBackPressed: () {
           // context.go(RoutePaths.signin);
-          Navigator.pushNamed(context, RouteNames.signIn);
+          // Navigator.pushNamed(context, RouteNames.signIn);
+          // AppRoute.go(SignInPage());
+          AppRoute.close();
         },
         titleText: "Forgot Password",
       ),
@@ -64,7 +69,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 title: "Continue",
                 onPressed: () {
                   // context.go(RoutePaths.sendCodeForgotPassword);
-                  Navigator.pushNamed(context, RouteNames.sendCode);
+                  // Navigator.pushNamed(context, RouteNames.sendCode);
+                  AppRoute.go(SendCodeForgotPassword());
                 },
               ),
             ],

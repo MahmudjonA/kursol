@@ -1,14 +1,16 @@
-// class AuthModel extends Auth {
-//   AuthModel({required super.phoneOrEmail, required super.password});
-//
-//   factory AuthModel.fromJson(Map<String, dynamic> json) {
-//     return AuthModel(
-//       phoneOrEmail: json['phone_or_email'],
-//       password: json['password'],
-//     );
-//   }
-//
-//   Map<String, dynamic> toJson() {
-//     return {'phone_or_email': phoneOrEmail, 'password': password};
-//   }
-// }
+import 'package:lms_system/features/auth/domain/entities/register_response_user.dart';
+
+class RegisterUserModel extends RegisterResponseUser {
+  RegisterUserModel({required super.userId, required super.authType});
+
+  factory RegisterUserModel.fromJson(Map<String, dynamic> json) {
+    return RegisterUserModel(
+      userId: json['user_id'],
+      authType: json['auth_type'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'user_id': userId, 'auth_type': authType};
+  }
+}

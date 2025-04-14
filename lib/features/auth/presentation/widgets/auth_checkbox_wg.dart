@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/common/colors/app_colors.dart';
+import '../../../../core/responsiveness/app_responsive.dart';
 import '../../../../core/text_styles/app_tex_style.dart';
 
 class AuthCheckboxWg extends StatelessWidget {
@@ -15,7 +16,7 @@ class AuthCheckboxWg extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Checkbox(
-          side: BorderSide(color: AppColors.primary(), width: 2),
+          side: BorderSide(color: AppColors.primary(), width: appW(2)),
           checkColor: AppColors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
           activeColor: AppColors.primary(),

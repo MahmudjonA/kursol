@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lms_system/core/route/rout_names.dart';
-
+import 'package:lms_system/core/route/rout_generator.dart';
+import 'package:lms_system/features/auth/presentation/pages/profile/pages/finger_print.dart';
 import '../../../../../../core/common/colors/app_colors.dart';
 import '../../../../../../core/common/widgets/app_bar/action_app_bar_wg.dart';
 import '../../../../../../core/common/widgets/buttons/default_button_wg.dart';
@@ -51,7 +51,8 @@ class _CreateNewPinState extends State<CreateNewPin> {
       appBar: ActionAppBarWg(
         onBackPressed: () {
           // context.go(RoutePaths.fillYourProfile);
-          Navigator.pop(context);
+          // Navigator.pop(context);
+          AppRoute.close();
         },
         titleText: "Create New Pin",
       ),
@@ -132,7 +133,8 @@ class _CreateNewPinState extends State<CreateNewPin> {
               title: "Continue",
               onPressed: () {
                 // context.go(RoutePaths.fingerPrint);
-                Navigator.pushNamed(context, RouteNames.fingerPrint);
+                // Navigator.pushNamed(context, RouteNames.fingerPrint);
+                AppRoute.go( Fingerprint());
               },
             ),
           ],

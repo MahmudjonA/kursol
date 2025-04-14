@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:lms_system/core/route/rout_generator.dart';
 import 'package:lms_system/core/route/rout_names.dart';
 import '../../../../../../core/common/colors/app_colors.dart';
 import '../../../../../../core/common/widgets/app_bar/action_app_bar_wg.dart';
@@ -51,7 +52,8 @@ class _FillProfilePageState extends State<FillProfilePage> {
                 leading: Icon(IconlyLight.camera),
                 title: Text('Take a Photo'),
                 onTap: () {
-                  Navigator.pop(context);
+                  // Navigator.pop(context);
+                  AppRoute.close();
                   _pickImage(ImageSource.camera);
                 },
               ),
@@ -59,7 +61,8 @@ class _FillProfilePageState extends State<FillProfilePage> {
                 leading: Icon(IconlyLight.image),
                 title: Text('Choose from Gallery'),
                 onTap: () {
-                  Navigator.pop(context);
+                  // Navigator.pop(context);
+                  AppRoute.close();
                   _pickImage(ImageSource.gallery);
                 },
               ),
@@ -75,7 +78,8 @@ class _FillProfilePageState extends State<FillProfilePage> {
       appBar: ActionAppBarWg(
         onBackPressed: () {
           // context.go(RoutePaths.signup);
-          Navigator.pop(context);
+          // Navigator.pop(context);
+          AppRoute.close();
         },
         titleText: "Fill Your Profile",
       ),

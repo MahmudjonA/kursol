@@ -244,6 +244,7 @@ class _HomePageState extends State<HomePage> {
                   return CourseCard(
                     onTap: () {
                       // context.pushNamed(RouteNames.courseDetails)
+                      Navigator.pushNamed(context, RouteNames.courseDetails);
                     },
                     imagePath: 'assets/images/Rectangle2.png',
                     category: 'Entrepreneurship',

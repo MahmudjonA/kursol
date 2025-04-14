@@ -1,3 +1,6 @@
+import 'package:lms_system/features/auth/data/models/auth_model.dart';
+
+import '../../presentation/bloc/auth_event.dart';
 import '../repositories/auth_repo.dart';
 
 class RegisterUserUseCase {
@@ -5,7 +8,7 @@ class RegisterUserUseCase {
 
   RegisterUserUseCase(this.authRepository);
 
-  Future<void> call({required String email, required String password}) async {
+  Future<RegisterUserModel> call({required String email, required String password}) async {
     return await authRepository.registerUser(email: email, password: password);
   }
 }

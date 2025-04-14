@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:lms_system/core/route/rout_generator.dart';
+import 'package:lms_system/features/auth/presentation/pages/forget_reset_password/pages/send_code_forgot_password.dart';
 import '../../../../../../core/common/colors/app_colors.dart';
 import '../../../../../../core/common/widgets/app_bar/action_app_bar_wg.dart';
 import '../../../../../../core/common/widgets/buttons/default_button_wg.dart';
@@ -27,7 +29,9 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
       appBar: ActionAppBarWg(
         onBackPressed: () {
           // context.go(RoutePaths.sendCodeForgotPassword);
-          Navigator.pushNamed(context, RouteNames.sendCode);
+          // Navigator.pushNamed(context, RouteNames.sendCode);
+          // AppRoute.go(SendCodeForgotPassword());
+          AppRoute.close();
         },
         titleText: "Create New Password",
       ),

@@ -14,7 +14,7 @@ Future<void> setup() async {
 
   //! Data sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(dio: sl()),
+    () => AuthRemoteDataSourceImpl(),
   );
   //! Repositories
   sl.registerLazySingleton<AuthRepo>(

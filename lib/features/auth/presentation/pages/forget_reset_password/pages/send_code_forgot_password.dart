@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:lms_system/core/route/rout_generator.dart';
+import 'package:lms_system/features/auth/presentation/pages/forget_reset_password/pages/create_new_password.dart';
 import '../../../../../../core/common/colors/app_colors.dart';
 import '../../../../../../core/common/widgets/app_bar/action_app_bar_wg.dart';
 import '../../../../../../core/common/widgets/buttons/default_button_wg.dart';
 import '../../../../../../core/responsiveness/app_responsive.dart';
-import '../../../../../../core/route/rout_names.dart';
 import '../../../../../../core/text_styles/app_tex_style.dart';
 
 class SendCodeForgotPassword extends StatefulWidget {
@@ -50,7 +51,9 @@ class _SendCodeForgotPasswordState extends State<SendCodeForgotPassword> {
       appBar: ActionAppBarWg(
         onBackPressed: () {
           // context.go(RoutePaths.forgotPassword);
-          Navigator.pushNamed(context, RouteNames.forgotPassword);
+          // Navigator.pushNamed(context, RouteNames.forgotPassword);
+          // AppRoute.go(ForgotPassword());
+          AppRoute.close();
         },
         titleText: "Forgot Password",
       ),
@@ -126,10 +129,11 @@ class _SendCodeForgotPasswordState extends State<SendCodeForgotPassword> {
               title: 'Verify',
               onPressed: () {
                 // context.go(RoutePaths.createNewPassword);
-                Navigator.pushNamed(
-                  context,
-                  RouteNames.createNewPassword,
-                );
+                // Navigator.pushNamed(
+                //   context,
+                //   RouteNames.createNewPassword,
+                // );
+                AppRoute.go(CreateNewPassword());
               },
             ),
           ],

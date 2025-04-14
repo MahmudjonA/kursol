@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:lms_system/core/route/rout_names.dart';
+import 'package:lms_system/core/route/rout_generator.dart';
+import 'package:lms_system/features/auth/presentation/pages/onboarding/onboarding_page.dart';
 import '../../../../../../core/common/colors/app_colors.dart';
 import '../../../../../../core/responsiveness/app_responsive.dart';
 
@@ -11,7 +12,7 @@ class SplashPage extends StatelessWidget {
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(const Duration(seconds: 2), () {
-        Navigator.pushNamed(context, RouteNames.onboarding);
+        AppRoute.go(OnboardingPage());
       });
     });
 

@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:iconly/iconly.dart';
+import 'package:lms_system/core/route/rout_generator.dart';
+import 'package:lms_system/features/auth/presentation/bloc/register_user/register_user_bloc.dart';
+import 'package:lms_system/features/auth/presentation/bloc/register_user/register_user_state.dart';
+import 'package:lms_system/features/auth/presentation/pages/profile/pages/fill_your_profile.dart';
+import 'package:lms_system/features/auth/presentation/pages/sign_in/sign_in_page.dart';
+import 'package:lms_system/features/auth/presentation/pages/sign_up/sign_up_confirm_email_or_password.dart';
 import '../../../../../core/common/colors/app_colors.dart';
 import '../../../../../core/common/sizes/sizes.dart';
 import '../../../../../core/common/widgets/app_bar/action_app_bar_wg.dart';
@@ -8,6 +16,7 @@ import '../../../../../core/common/widgets/textfield/custom_text_field_wg.dart';
 import '../../../../../core/responsiveness/app_responsive.dart';
 import '../../../../../core/route/rout_names.dart';
 import '../../../../../core/text_styles/app_tex_style.dart';
+import '../../bloc/auth_event.dart';
 import '../../widgets/auth_checkbox_wg.dart';
 import '../../widgets/auth_or_continue_with_wg.dart';
 import '../../widgets/auth_sign_in_up_choice_wg.dart';
@@ -22,7 +31,9 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _emailOrPhoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _repeatPassword = TextEditingController();
   final FocusNode _passwordFocusNode = FocusNode();
+  final FocusNode _repeatPasswordFocusNode = FocusNode();
   final FocusNode _emailOrPhoneFocusNode = FocusNode();
   bool _rememberMe = false;
   bool _obscureText = true;
@@ -47,8 +58,58 @@ class _SignUpPageState extends State<SignUpPage> {
   void _toggleInputMode() {
     setState(() {
       _useEmail = !_useEmail;
-      _emailOrPhoneController.clear(); // Clear input when switching
+      _emailOrPhoneController.clear();
     });
+  }
+
+  void registerUser() {
+    final emailOrPhone = _emailOrPhoneController.text;
+    final password = _passwordController.text;
+    final repeatPassword = _repeatPassword.text;
+
+    if (emailOrPhone.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Please enter your email or phone number."),
+          backgroundColor: AppColors.red,
+        ),
+      );
+      return;
+    }
+
+    if (password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Please enter your password."),
+          backgroundColor: AppColors.red,
+        ),
+      );
+      return;
+    }
+
+    if (repeatPassword.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Please repeat your password."),
+          backgroundColor: AppColors.red,
+        ),
+      );
+      return;
+    }
+
+    if (password != repeatPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Passwords do not match!"),
+          backgroundColor: AppColors.red,
+        ),
+      );
+      return;
+    }
+
+    context.read<RegisterUserBloc>().add(
+      RegisterUser(email: emailOrPhone, password: password),
+    );
   }
 
   @override
@@ -56,7 +117,6 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       appBar: ActionAppBarWg(
         onBackPressed: () {
-          // context.go(RoutePaths.register_user);
           Navigator.pop(context);
         },
       ),
@@ -126,6 +186,29 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                     ),
                   ),
+                  CustomTextFieldWg(
+                    isFocused: _repeatPasswordFocusNode.hasFocus,
+                    obscureText: _obscureText,
+                    controller: _repeatPassword,
+                    focusNode: _repeatPasswordFocusNode,
+                    prefixIcon: IconlyBold.lock,
+                    hintText: "Repeat Password",
+                    trailingWidget: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _obscureText = !_obscureText;
+                        });
+                      },
+                      icon: Icon(
+                        _obscureText ? IconlyBold.hide : IconlyBold.show,
+                        size: appH(20),
+                        color:
+                            _repeatPasswordFocusNode.hasFocus
+                                ? AppColors.primary()
+                                : AppColors.greyScale.grey500,
+                      ),
+                    ),
+                  ),
                   AuthCheckboxWg(
                     rememberMe: _rememberMe,
                     onChanged: (value) {
@@ -134,11 +217,33 @@ class _SignUpPageState extends State<SignUpPage> {
                       });
                     },
                   ),
-                  DefaultButtonWg(
-                    title: "Sign Up",
-                    onPressed: () {
-                      // context.go(RoutePaths.home);
-                      Navigator.pushNamed(context, RouteNames.fillYourProfile);
+                  BlocConsumer<RegisterUserBloc, RegisterUserState>(
+                    listener: (context, state) {
+                      if (state is RegisterUserSuccess) {
+                        AppRoute.go(SignUpConfirmEmailOrPassword());
+                      } else if (state is RegisterUserError) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(state.message),
+                            backgroundColor: AppColors.red,
+                          ),
+                        );
+                      }
+                    },
+                    builder: (context, state) {
+                      if (state is RegisterUserLoading) {
+                        return Center(
+                          child: SpinKitFadingCircle(
+                            color: AppColors.primary(),
+                            size: 60.0,
+                          ),
+                        );
+                      } else {
+                        return DefaultButtonWg(
+                          title: "Sign Up",
+                          onPressed: registerUser,
+                        );
+                      }
                     },
                   ),
                 ],
@@ -151,8 +256,7 @@ class _SignUpPageState extends State<SignUpPage> {
               AuthSignInUpChoiceWg(
                 text: "Already have an account?",
                 onPressed: () {
-                  // context.go(RoutePaths.signup);
-                  Navigator.pushReplacementNamed(context, RouteNames.signIn);
+                  AppRoute.go(SignInPage());
                 },
                 buttonText: "Sign In",
               ),

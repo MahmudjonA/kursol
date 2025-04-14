@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lms_system/core/route/rout_names.dart';
+import 'package:lms_system/core/route/rout_generator.dart';
+import 'package:lms_system/features/auth/presentation/pages/auth_page.dart';
 import 'package:lms_system/features/auth/presentation/pages/onboarding/widget/onboarding_widget.dart';
 import '../../../../../core/common/colors/app_colors.dart';
 import '../../../../../core/common/sizes/sizes.dart';
@@ -72,7 +73,8 @@ class OnboardingPageState extends State<OnboardingPage> {
                   );
                 }
                 if (_currentPage == texts.length - 1) {
-                  Navigator.pushNamed(context, RouteNames.auth);
+                  // Navigator.pushNamed(context, RouteNames.auth);
+                  AppRoute.go(AuthPage());
                 }
               },
             ),

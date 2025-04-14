@@ -11,12 +11,10 @@ class RegisterUserBloc extends Bloc<AuthEvent, RegisterUserState> {
       emit(RegisterUserLoading());
       try {
         final result = await registerUserUseCase(
-          email: event.emailOrPhone,
+          email: event.email,
           password: event.password,
         );
-        emit(
-          RegisterUserSuccess(),
-        );
+        emit(RegisterUserSuccess(registerUser: result));
       } catch (e) {
         emit(RegisterUserError(message: e.toString()));
       }

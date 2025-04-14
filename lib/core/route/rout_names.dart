@@ -17,4 +17,8 @@ class RouteNames {
   static const String notification = '/notification';
   static const String mentors = '/mentors';
   static const String search = '/search';
+  static const String courseDetails = '/courseDetails';
+  static const String mentorsProfile = '/mentorsProfile';
+  static const String myCourse = '/myCourse';
+
 }

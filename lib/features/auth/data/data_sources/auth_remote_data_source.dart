@@ -1,37 +1,36 @@
-import 'package:dio/dio.dart';
+import 'package:lms_system/core/utils/logger.dart';
+import '../../../../core/network/dio_client.dart';
+import '../models/auth_model.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<void> registerUser({required String email, required String password});
+  Future<RegisterUserModel> registerUser({
+    required String email,
+    required String password,
+  });
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  final Dio dio;
-
-  AuthRemoteDataSourceImpl({required this.dio}) {
-    dio.options = BaseOptions(
-      headers: {'Content-Type': 'application/json'},
-      baseUrl: 'https://manuchehra.pythonanywhere.com/api/',
-    );
-  }
+  final DioClient dioClient = DioClient();
 
   @override
-  Future<void> registerUser({
+  Future<RegisterUserModel> registerUser({
     required String email,
     required String password,
   }) async {
     try {
-      final response = await dio.post(
-        '/register_user/register/',
+      final response = await dioClient.post(
+        'auth/register/',
         data: {'phone_or_email': email, 'password': password},
       );
-
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return;
+        LoggerService.info('Registration successful: ${response.data}');
+        return RegisterUserModel.fromJson(response.data);
       } else {
+        LoggerService.warning("Registration failed: ${response.statusCode}");
         throw Exception('Registration failed: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error during user registration: $e');
+      LoggerService.error('Error during user registration: $e');
       rethrow;
     }
   }

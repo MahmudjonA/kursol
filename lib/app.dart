@@ -10,13 +10,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     AppResponsive.init(context);
     return MaterialApp(
+      navigatorKey: AppRoute.navigatorKey,
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
       initialRoute: RouteNames.splash,
-      onGenerateRoute: AppRoute(context: context).onGenerateRoute,
+      onGenerateRoute: AppRoute.onGenerateRoute,
       // home: SplashPage(),
     );
   }

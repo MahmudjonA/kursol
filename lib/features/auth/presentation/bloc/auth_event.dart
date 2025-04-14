@@ -3,11 +3,8 @@ abstract class AuthEvent {
 }
 
 class RegisterUser extends AuthEvent {
-  final String emailOrPhone;
+  final String email;
   final String password;
 
-  const RegisterUser({
-    required this.emailOrPhone,
-    required this.password,
-  });
+  const RegisterUser({required this.email, required this.password});
 }

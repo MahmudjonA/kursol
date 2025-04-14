@@ -10,21 +10,58 @@ import 'package:lms_system/features/auth/presentation/pages/profile/pages/fill_y
 import 'package:lms_system/features/auth/presentation/pages/profile/pages/finger_print.dart';
 import 'package:lms_system/features/auth/presentation/pages/sign_in/sign_in_page.dart';
 import 'package:lms_system/features/auth/presentation/pages/sign_up/sign_up_page.dart';
+import 'package:lms_system/features/course_details/presentation/pages/course_details/course_details_page.dart';
+import 'package:lms_system/features/course_details/presentation/pages/mentor_profile/mentor_profile_page.dart';
 import 'package:lms_system/features/home/presentation/pages/bookmark/bookmark_page.dart';
 import 'package:lms_system/features/home/presentation/pages/courses/popular_courses.dart';
 import 'package:lms_system/features/home/presentation/pages/home_page.dart';
-import 'package:lms_system/features/home/presentation/pages/main_page.dart';
+import 'package:lms_system/features/main_page.dart';
 import 'package:lms_system/features/home/presentation/pages/mentors/mentors_page.dart';
 import 'package:lms_system/features/home/presentation/pages/notification/notification_page.dart';
 import 'package:lms_system/features/home/presentation/pages/search/search_page.dart';
 import '../../features/auth/presentation/pages/slpash/splash_page.dart';
 
 class AppRoute {
-  BuildContext context;
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
 
-  AppRoute({required this.context});
+  static void close() {
+    if (navigatorKey.currentState?.canPop() ?? false) {
+      navigatorKey.currentState!.pop();
+    }
+  }
 
-  Route onGenerateRoute(RouteSettings routeSettings) {
+  static void go(Widget page) {
+    navigatorKey.currentState?.push(_createRoute(page));
+  }
+
+  static void open(Widget page) {
+    navigatorKey.currentState?.pushAndRemoveUntil(
+      _createRoute(page),
+      (Route<dynamic> route) => false,
+    );
+  }
+
+  static PageRouteBuilder _createRoute(Widget page) {
+    return PageRouteBuilder(
+      transitionDuration: const Duration(milliseconds: 200),
+      reverseTransitionDuration: const Duration(milliseconds: 100),
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        final curvedAnimation = CurvedAnimation(
+          parent: animation,
+          curve: Curves.ease,
+        );
+        return ScaleTransition(
+          alignment: Alignment.center,
+          scale: Tween<double>(begin: 0.950, end: 1).animate(curvedAnimation),
+          child: child,
+        );
+      },
+    );
+  }
+
+  static Route onGenerateRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
       case RouteNames.splash:
         return MaterialPageRoute(builder: (_) => const SplashPage());
@@ -64,6 +101,10 @@ class AppRoute {
         return MaterialPageRoute(builder: (_) => MentorsPage());
       case RouteNames.popularCourses:
         return MaterialPageRoute(builder: (_) => PopularCourses());
+      case RouteNames.courseDetails:
+        return MaterialPageRoute(builder: (_) => CourseDetailsPage());
+      case RouteNames.mentorsProfile:
+        return MaterialPageRoute(builder: (_) => MentorProfilePage());
 
       // case RouteNames.onboarding:
       //   int productId = routeSettings.arguments as int;
@@ -75,7 +116,7 @@ class AppRoute {
     }
   }
 
-  Route<dynamic> _errorRoute() {
+  static Route<dynamic> _errorRoute() {
     return MaterialPageRoute(
       builder:
           (_) => Scaffold(
