@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:iconly/iconly.dart';
+import 'package:lms_system/core/route/rout_generator.dart';
 import 'package:lms_system/core/route/rout_names.dart';
+import 'package:lms_system/features/home/presentation/pages/courses/popular_courses.dart';
 import '../../../../core/common/colors/app_colors.dart';
 import '../../../../core/common/widgets/custom_choice_chip_wg.dart';
 import '../../../../core/responsiveness/app_responsive.dart';
 import '../../../../core/text_styles/urbanist_text_style.dart';
+import '../bloc/courses/courses_bloc.dart';
+import '../bloc/courses/courses_state.dart';
+import '../bloc/home_event.dart';
 import '../widgets/course_card_widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -23,6 +30,14 @@ class _HomePageState extends State<HomePage> {
     '💰 Business',
     '🎨 Design',
   ];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // BlocProvider.of<CourseBloc>(context).add(GetCourses(limit: 10));
+    context.read<CourseBloc>().add(GetCourses(limit: 10));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -203,8 +218,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   TextButton(
                     onPressed: () {
-                      // context.pushNamed(RouteNames.homePopularCourses);
-                      Navigator.pushNamed(context, RouteNames.popularCourses);
+                      AppRoute.open(PopularCourses());
                     },
                     child: Text(
                       "See All",
@@ -236,25 +250,67 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               SizedBox(height: appH(8)),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: 3,
-                itemBuilder: (context, index) {
-                  return CourseCard(
-                    onTap: () {
-                      // context.pushNamed(RouteNames.courseDetails)
-                      Navigator.pushNamed(context, RouteNames.courseDetails);
-                    },
-                    imagePath: 'assets/images/Rectangle2.png',
-                    category: 'Entrepreneurship',
-                    title: 'Digital Entrepren eur...',
-                    price: 39,
-                    oldPrice: 80,
-                    rating: 4.8,
-                    students: 8289,
-                    onBookmarkPressed: () {},
-                  );
+              // ListView.builder(
+              //   shrinkWrap: true,
+              //   physics: NeverScrollableScrollPhysics(),
+              //   itemCount: 3,
+              //   itemBuilder: (context, index) {
+              //     return CourseCard(
+              //       onTap: () {
+              //         // context.pushNamed(RouteNames.courseDetails)
+              //         Navigator.pushNamed(context, RouteNames.courseDetails);
+              //       },
+              //       imagePath: 'assets/images/Rectangle2.png',
+              //       category: 'Entrepreneurship',
+              //       title: 'Digital Entrepren eur...',
+              //       price: 39,
+              //       oldPrice: 80,
+              //       rating: 4.8,
+              //       students: 8289,
+              //       onBookmarkPressed: () {},
+              //     );
+              //   },
+              // ),
+              BlocBuilder<CourseBloc, CourseState>(
+                builder: (context, state) {
+                  if (state is CourseLoading) {
+                    return Center(
+                      child: SpinKitFadingCircle(
+                        color: AppColors.primary.blue500,
+                        size: 60.0,
+                      ),
+                    );
+                  } else if (state is CourseLoaded) {
+                    final courses = state.courses;
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: courses.count,
+                      itemBuilder: (context, index) {
+                        final course = courses.results[index];
+                        return CourseCard(
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              RouteNames.courseDetails,
+                            );
+                          },
+                          imagePath: course.image!,
+                          category: course.category.toString(),
+                          title: course.title,
+                          price: double.tryParse(course.price) ?? 0,
+                          oldPrice: 80,
+                          rating: 4.8,
+                          students: 8289,
+                          onBookmarkPressed: () {},
+                        );
+                      },
+                    );
+                  } else if (state is CourseError) {
+                    return Center(child: Text('Error: ${state.message}'));
+                  } else {
+                    return SizedBox.shrink();
+                  }
                 },
               ),
             ],

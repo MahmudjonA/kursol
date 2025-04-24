@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:iconly/iconly.dart';
 import 'package:lms_system/core/route/rout_generator.dart';
+import 'package:lms_system/features/auth/data/data_sources/local/auth_local_data_source.dart';
 import 'package:lms_system/features/auth/presentation/bloc/register_user/register_user_bloc.dart';
 import 'package:lms_system/features/auth/presentation/bloc/register_user/register_user_state.dart';
-import 'package:lms_system/features/auth/presentation/pages/profile/pages/fill_your_profile.dart';
 import 'package:lms_system/features/auth/presentation/pages/sign_in/sign_in_page.dart';
 import 'package:lms_system/features/auth/presentation/pages/sign_up/sign_up_confirm_email_or_password.dart';
 import '../../../../../core/common/colors/app_colors.dart';
@@ -13,11 +13,11 @@ import '../../../../../core/common/sizes/sizes.dart';
 import '../../../../../core/common/widgets/app_bar/action_app_bar_wg.dart';
 import '../../../../../core/common/widgets/buttons/default_button_wg.dart';
 import '../../../../../core/common/widgets/textfield/custom_text_field_wg.dart';
+import '../../../../../core/di/service_locator.dart';
 import '../../../../../core/responsiveness/app_responsive.dart';
-import '../../../../../core/route/rout_names.dart';
 import '../../../../../core/text_styles/app_tex_style.dart';
+import '../../../../../core/utils/logger.dart';
 import '../../bloc/auth_event.dart';
-import '../../widgets/auth_checkbox_wg.dart';
 import '../../widgets/auth_or_continue_with_wg.dart';
 import '../../widgets/auth_sign_in_up_choice_wg.dart';
 
@@ -35,22 +35,25 @@ class _SignUpPageState extends State<SignUpPage> {
   final FocusNode _passwordFocusNode = FocusNode();
   final FocusNode _repeatPasswordFocusNode = FocusNode();
   final FocusNode _emailOrPhoneFocusNode = FocusNode();
-  bool _rememberMe = false;
   bool _obscureText = true;
   bool _useEmail = true;
+  final authLocalDataSource = sl<AuthLocalDataSource>();
 
   @override
   void initState() {
     super.initState();
     _passwordFocusNode.addListener(() => setState(() {}));
     _emailOrPhoneFocusNode.addListener(() => setState(() {}));
+    _repeatPasswordFocusNode.addListener(() => setState(() {}));
   }
 
   @override
   void dispose() {
     _passwordFocusNode.dispose();
     _passwordController.dispose();
+    _repeatPasswordFocusNode.dispose();
     _emailOrPhoneFocusNode.dispose();
+    _repeatPassword.dispose();
     _emailOrPhoneController.dispose();
     super.dispose();
   }
@@ -112,12 +115,23 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
+  void saveRememberMe(String email, String password) {
+    authLocalDataSource
+        .saveRememberMe(email, password)
+        .then((_) {
+          LoggerService.info("Remember Me saved : $email - $password");
+        })
+        .catchError((error) {
+          LoggerService.error("Error saving Remember Me: $error");
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: ActionAppBarWg(
         onBackPressed: () {
-          Navigator.pop(context);
+          AppRoute.close();
         },
       ),
       backgroundColor: AppColors.white,
@@ -209,18 +223,20 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                     ),
                   ),
-                  AuthCheckboxWg(
-                    rememberMe: _rememberMe,
-                    onChanged: (value) {
-                      setState(() {
-                        _rememberMe = value!;
-                      });
-                    },
-                  ),
+
                   BlocConsumer<RegisterUserBloc, RegisterUserState>(
                     listener: (context, state) {
                       if (state is RegisterUserSuccess) {
-                        AppRoute.go(SignUpConfirmEmailOrPassword());
+                        saveRememberMe(
+                          _emailOrPhoneController.text,
+                          _passwordController.text,
+                        );
+                        AppRoute.go(
+                          SignUpConfirmEmailOrPassword(
+                            userId: state.registerUser.userId,
+                            emailOrPhone: _emailOrPhoneController.text,
+                          ),
+                        );
                       } else if (state is RegisterUserError) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -256,7 +272,7 @@ class _SignUpPageState extends State<SignUpPage> {
               AuthSignInUpChoiceWg(
                 text: "Already have an account?",
                 onPressed: () {
-                  AppRoute.go(SignInPage());
+                  AppRoute.replace(SignInPage());
                 },
                 buttonText: "Sign In",
               ),

@@ -73,8 +73,7 @@ class OnboardingPageState extends State<OnboardingPage> {
                   );
                 }
                 if (_currentPage == texts.length - 1) {
-                  // Navigator.pushNamed(context, RouteNames.auth);
-                  AppRoute.go(AuthPage());
+                  AppRoute.open(AuthPage());
                 }
               },
             ),

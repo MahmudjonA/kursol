@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lms_system/core/route/rout_names.dart';
+import 'package:lms_system/core/route/rout_generator.dart';
+import 'package:lms_system/features/auth/presentation/pages/sign_in/sign_in_page.dart';
+import 'package:lms_system/features/auth/presentation/pages/sign_up/sign_up_page.dart';
 import '../../../../core/common/colors/app_colors.dart';
 import '../../../../core/common/sizes/sizes.dart';
 import '../../../../core/common/widgets/app_bar/action_app_bar_wg.dart';
@@ -24,7 +26,6 @@ class AuthPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Assets.images.auth.image(),
             Image.asset("assets/images/auth.png"),
             Text(
               "Let's you in",
@@ -82,8 +83,7 @@ class AuthPage extends StatelessWidget {
                 DefaultButtonWg(
                   title: "Sign in with password",
                   onPressed: () {
-                    // context.go(RoutePaths.signin);
-                    Navigator.pushNamed(context, RouteNames.signIn);
+                    AppRoute.go(SignInPage());
                   },
                 ),
               ],
@@ -91,8 +91,7 @@ class AuthPage extends StatelessWidget {
             AuthSignInUpChoiceWg(
               text: "Don't have an account?",
               onPressed: () {
-                // context.go(RoutePaths.signup);
-                Navigator.pushNamed(context, RouteNames.signUp);
+                AppRoute.go(SignUpPage());
               },
               buttonText: "Sign up",
             ),

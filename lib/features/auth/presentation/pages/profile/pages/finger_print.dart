@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:lms_system/core/route/rout_generator.dart';
+import 'package:lms_system/features/main_page.dart';
 import 'package:local_auth/local_auth.dart';
 import '../../../../../../core/common/colors/app_colors.dart';
 import '../../../../../../core/common/widgets/app_bar/action_app_bar_wg.dart';
 import '../../../../../../core/common/widgets/buttons/default_button_wg.dart';
 import '../../../../../../core/responsiveness/app_responsive.dart';
 import '../../../../../../core/text_styles/app_tex_style.dart';
-import '../widgets/show_succes_dialog.dart';
+import '../../../widgets/show_succes_dialog.dart';
 
 class Fingerprint extends StatefulWidget {
   const Fingerprint({super.key});
@@ -57,7 +59,7 @@ class _FingerprintState extends State<Fingerprint> {
 
       if (!mounted) return;
       if (authenticated == true) {
-        showSuccessDialog(context);
+        showSuccessDialog(context, MainPage());
       }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -87,8 +89,7 @@ class _FingerprintState extends State<Fingerprint> {
       backgroundColor: AppColors.white,
       appBar: ActionAppBarWg(
         onBackPressed: () {
-          // context.go(RoutePaths.createNewPin);
-          Navigator.pop(context);
+          AppRoute.close();
         },
         titleText: "Set Fingerprint",
       ),
@@ -132,7 +133,7 @@ class _FingerprintState extends State<Fingerprint> {
                         vertical: 18,
                       ),
                     ),
-                    onPressed: () => showSuccessDialog(context),
+                    onPressed: () => showSuccessDialog(context, MainPage()),
                     child: Text(
                       "Skip",
                       style: AppTextStyles.urbanist.bold(

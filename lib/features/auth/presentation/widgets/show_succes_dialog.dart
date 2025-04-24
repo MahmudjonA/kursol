@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:lms_system/core/route/rout_names.dart';
+import 'package:lms_system/core/route/rout_generator.dart';
+import '../../../../core/common/colors/app_colors.dart';
+import '../../../../core/responsiveness/app_responsive.dart';
+import '../../../../core/text_styles/app_tex_style.dart';
 
-import '../../../../../../core/common/colors/app_colors.dart';
-import '../../../../../../core/responsiveness/app_responsive.dart';
-import '../../../../../../core/text_styles/app_tex_style.dart';
-
-void showSuccessDialog(BuildContext context) {
+void showSuccessDialog(BuildContext context, Widget page) {
   showDialog(
-    context: context,
+    context: context!,
     barrierDismissible: false,
     builder: (BuildContext context) {
       return Dialog(
@@ -29,7 +28,7 @@ void showSuccessDialog(BuildContext context) {
                 ),
               ),
               Text(
-                "Account created successfully",
+                "Account is ready to use.",
                 textAlign: TextAlign.center,
                 style: AppTextStyles.urbanist.regular(
                   color: AppColors.greyScale.grey900,
@@ -45,7 +44,6 @@ void showSuccessDialog(BuildContext context) {
   );
 
   Future.delayed(Duration(seconds: 3), () {
-    Navigator.pushNamed(context, RouteNames.main);
-    // context.go(RoutePaths.home);
+    AppRoute.go(page);
   });
 }

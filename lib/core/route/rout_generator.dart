@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lms_system/core/route/rout_names.dart';
 import 'package:lms_system/features/auth/presentation/pages/auth_page.dart';
-import 'package:lms_system/features/auth/presentation/pages/forget_reset_password/pages/create_new_password.dart';
 import 'package:lms_system/features/auth/presentation/pages/forget_reset_password/pages/forgot_password.dart';
-import 'package:lms_system/features/auth/presentation/pages/forget_reset_password/pages/send_code_forgot_password.dart';
 import 'package:lms_system/features/auth/presentation/pages/onboarding/onboarding_page.dart';
 import 'package:lms_system/features/auth/presentation/pages/profile/pages/create_new_pin.dart';
 import 'package:lms_system/features/auth/presentation/pages/profile/pages/fill_your_profile.dart';
@@ -42,6 +40,15 @@ class AppRoute {
     );
   }
 
+  static void replace(Widget page) {
+    navigatorKey.currentState?.pushReplacement(_createRoute(page));
+  }
+
+
+
+
+
+
   static PageRouteBuilder _createRoute(Widget page) {
     return PageRouteBuilder(
       transitionDuration: const Duration(milliseconds: 200),
@@ -61,6 +68,7 @@ class AppRoute {
     );
   }
 
+
   static Route onGenerateRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
       case RouteNames.splash:
@@ -75,12 +83,12 @@ class AppRoute {
         return MaterialPageRoute(builder: (_) => const SignInPage());
       case RouteNames.forgotPassword:
         return MaterialPageRoute(builder: (_) => const ForgotPassword());
-      case RouteNames.createNewPassword:
-        return MaterialPageRoute(builder: (_) => const CreateNewPassword());
-      case RouteNames.sendCode:
-        return MaterialPageRoute(
-          builder: (_) => const SendCodeForgotPassword(),
-        );
+      // case RouteNames.createNewPassword:
+      //   return MaterialPageRoute(builder: (_) => const CreateNewPassword());
+      // // case RouteNames.sendCode:
+      // //   return MaterialPageRoute(
+      //     builder: (_) => const SendCodeForgotPassword(),
+      //   );
       case RouteNames.home:
         return MaterialPageRoute(builder: (_) => const HomePage());
       case RouteNames.main:
@@ -105,12 +113,6 @@ class AppRoute {
         return MaterialPageRoute(builder: (_) => CourseDetailsPage());
       case RouteNames.mentorsProfile:
         return MaterialPageRoute(builder: (_) => MentorProfilePage());
-
-      // case RouteNames.onboarding:
-      //   int productId = routeSettings.arguments as int;
-      //   return MaterialPageRoute(
-      //     builder: (_) => SingleProductPage(productId: productId),
-      //   );
       default:
         return _errorRoute();
     }

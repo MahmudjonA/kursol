@@ -67,7 +67,10 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
-      body: pages[_currentIndex],
+      body: IndexedStack(
+        index: _currentIndex,
+        children: pages,
+      ),
       bottomNavigationBar: SizedBox(
         height: appH(95),
         child: BottomNavigationBar(
@@ -78,7 +81,6 @@ class _MainPageState extends State<MainPage> {
           selectedItemColor: AppColors.primary(),
           unselectedItemColor: AppColors.greyScale.grey500,
           onTap: (int index) => goOtherTab(index),
-          // Just update the selected tab
           selectedLabelStyle: AppTextStyles.urbanist.bold(
             color: AppColors.primary(),
             fontSize: 10,

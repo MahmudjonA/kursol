@@ -1,14 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:lms_system/core/route/rout_generator.dart';
-import 'package:lms_system/features/auth/presentation/pages/forget_reset_password/pages/create_new_password.dart';
+import 'package:lms_system/features/auth/presentation/bloc/confirm_email/confirm_email_bloc.dart';
+import 'package:lms_system/features/auth/presentation/bloc/confirm_email/confirm_email_state.dart';
+import 'package:lms_system/features/main_page.dart';
 import '../../../../../../core/common/colors/app_colors.dart';
 import '../../../../../../core/common/widgets/app_bar/action_app_bar_wg.dart';
 import '../../../../../../core/common/widgets/buttons/default_button_wg.dart';
 import '../../../../../../core/responsiveness/app_responsive.dart';
 import '../../../../../../core/text_styles/app_tex_style.dart';
+import '../../bloc/auth_event.dart';
 
 class SignUpConfirmEmailOrPassword extends StatefulWidget {
-  const SignUpConfirmEmailOrPassword({super.key});
+  final String emailOrPhone;
+  final int userId;
+
+  const SignUpConfirmEmailOrPassword({
+    super.key,
+    required this.userId,
+    required this.emailOrPhone,
+  });
 
   @override
   State<SignUpConfirmEmailOrPassword> createState() =>
@@ -46,6 +58,27 @@ class _SignUpConfirmEmailOrPasswordState
     }
   }
 
+  void confirmEmail() {
+    final code = controllers.map((c) => c.text).join();
+
+    if (code.length == 4) {
+      context.read<ConfirmEmailBloc>().add(
+        ConfirmEmail(
+          userId: widget.userId,
+          code: int.tryParse(code) ?? 0,
+          isResetPassword: false,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please enter all 4 digits'),
+          backgroundColor: AppColors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,7 +97,7 @@ class _SignUpConfirmEmailOrPasswordState
           spacing: appH(80),
           children: [
             Text(
-              'Code has been send to +1 111 ******99',
+              'Code has been send to ${widget.emailOrPhone}',
               textAlign: TextAlign.center,
               style: AppTextStyles.urbanist.regular(
                 color: AppColors.greyScale.grey900,
@@ -124,10 +157,34 @@ class _SignUpConfirmEmailOrPasswordState
                 fontSize: 18,
               ),
             ),
-            DefaultButtonWg(
-              title: 'Continue',
-              onPressed: () {
-                AppRoute.go(CreateNewPassword());
+            BlocConsumer<ConfirmEmailBloc, ConfirmEmailState>(
+              listener: (context, state) {
+                if (state is ConfirmEmailSuccess) {
+                  // AppRoute.go(FillProfilePage());
+                  AppRoute.go(MainPage());
+                } else if (state is ConfirmEmailError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.message),
+                      backgroundColor: AppColors.red,
+                    ),
+                  );
+                }
+              },
+              builder: (context, state) {
+                if (state is ConfirmEmailLoading) {
+                  return Center(
+                    child: SpinKitFadingCircle(
+                      color: AppColors.primary(),
+                      size: 60.0,
+                    ),
+                  );
+                } else {
+                  return DefaultButtonWg(
+                    title: "Continue",
+                    onPressed: confirmEmail,
+                  );
+                }
               },
             ),
           ],

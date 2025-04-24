@@ -1,12 +1,10 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:lms_system/core/route/rout_generator.dart';
-import 'package:lms_system/core/route/rout_names.dart';
+import 'package:lms_system/features/auth/presentation/pages/profile/pages/create_new_pin.dart';
 import '../../../../../../core/common/colors/app_colors.dart';
 import '../../../../../../core/common/widgets/app_bar/action_app_bar_wg.dart';
 import '../../../../../../core/common/widgets/buttons/default_button_wg.dart';
@@ -52,7 +50,6 @@ class _FillProfilePageState extends State<FillProfilePage> {
                 leading: Icon(IconlyLight.camera),
                 title: Text('Take a Photo'),
                 onTap: () {
-                  // Navigator.pop(context);
                   AppRoute.close();
                   _pickImage(ImageSource.camera);
                 },
@@ -61,7 +58,6 @@ class _FillProfilePageState extends State<FillProfilePage> {
                 leading: Icon(IconlyLight.image),
                 title: Text('Choose from Gallery'),
                 onTap: () {
-                  // Navigator.pop(context);
                   AppRoute.close();
                   _pickImage(ImageSource.gallery);
                 },
@@ -77,8 +73,6 @@ class _FillProfilePageState extends State<FillProfilePage> {
       backgroundColor: AppColors.white,
       appBar: ActionAppBarWg(
         onBackPressed: () {
-          // context.go(RoutePaths.signup);
-          // Navigator.pop(context);
           AppRoute.close();
         },
         titleText: "Fill Your Profile",
@@ -148,8 +142,7 @@ class _FillProfilePageState extends State<FillProfilePage> {
               DefaultButtonWg(
                 title: "Continue",
                 onPressed: () {
-                  // context.go(RoutePaths.createNewPin);
-                  Navigator.pushNamed(context, RouteNames.createNewPin);
+                  AppRoute.go(CreateNewPin());
                 },
               ),
             ],

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 
@@ -60,7 +61,11 @@ class _CourseCardState extends State<CourseCard> {
             child: SizedBox(
               width: appW(120),
               height: appH(120),
-              child: Image.asset(widget.imagePath, fit: BoxFit.cover),
+              child: CachedNetworkImage(
+                imageUrl: widget.imagePath,
+                fit: BoxFit.cover,
+                errorWidget: (context, url, error) => const Icon(Icons.account_circle),
+              ),
             ),
           ),
           SizedBox(width: appH(16)),

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:lms_system/core/common/api_urls.dart';
 
 class DioClient {
   final Dio _dio;
@@ -6,9 +7,9 @@ class DioClient {
   DioClient._internal()
     : _dio = Dio(
         BaseOptions(
-          baseUrl: 'https://manuchehra.pythonanywhere.com/api/',
-          connectTimeout: const Duration(seconds: 15),
-          receiveTimeout: const Duration(seconds: 15),
+          baseUrl: ApiUrls.baseUrl,
+          connectTimeout: const Duration(seconds: 30),
+          receiveTimeout: const Duration(seconds: 30),
           headers: {'Content-Type': 'application/json'},
         ),
       ) {

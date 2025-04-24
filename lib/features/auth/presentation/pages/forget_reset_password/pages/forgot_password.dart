@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:iconly/iconly.dart';
 import 'package:lms_system/core/route/rout_generator.dart';
+import 'package:lms_system/features/auth/presentation/bloc/auth_event.dart';
+import 'package:lms_system/features/auth/presentation/bloc/reset_password/reset_password_bloc.dart';
+import 'package:lms_system/features/auth/presentation/bloc/reset_password/reset_password_state.dart';
 import 'package:lms_system/features/auth/presentation/pages/forget_reset_password/pages/send_code_forgot_password.dart';
-import 'package:lms_system/features/auth/presentation/pages/sign_in/sign_in_page.dart';
 import '../../../../../../core/common/colors/app_colors.dart';
 import '../../../../../../core/common/widgets/app_bar/action_app_bar_wg.dart';
 import '../../../../../../core/common/widgets/buttons/default_button_wg.dart';
+import '../../../../../../core/common/widgets/textfield/custom_text_field_wg.dart';
 import '../../../../../../core/responsiveness/app_responsive.dart';
-import '../../../../../../core/route/rout_names.dart';
 import '../../../../../../core/text_styles/app_tex_style.dart';
 
 class ForgotPassword extends StatefulWidget {
@@ -17,7 +22,35 @@ class ForgotPassword extends StatefulWidget {
 }
 
 class _ForgotPasswordState extends State<ForgotPassword> {
-  int _selectedIndex = 0;
+  final TextEditingController _emailController = TextEditingController();
+  final FocusNode _emailFocusNode = FocusNode();
+  bool _isFocusedEmail = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailFocusNode.addListener(() {
+      setState(() {
+        _isFocusedEmail = _emailFocusNode.hasFocus;
+      });
+    });
+  }
+
+  void resetPassword() {
+    String email = _emailController.text.trim();
+    if (email.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Please enter your email"),
+          backgroundColor: AppColors.red,
+        ),
+      );
+      return;
+    }
+    BlocProvider.of<ResetPasswordBloc>(
+      context,
+    ).add(ResetPasswordEvent(emailOrPhone: email));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +58,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       backgroundColor: AppColors.white,
       appBar: ActionAppBarWg(
         onBackPressed: () {
-          // context.go(RoutePaths.signin);
-          // Navigator.pushNamed(context, RouteNames.signIn);
-          // AppRoute.go(SignInPage());
           AppRoute.close();
         },
         titleText: "Forgot Password",
@@ -38,7 +68,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
-            spacing: appH(24),
+            spacing: appH(60),
             children: [
               Image.asset(
                 "assets/images/forgot_password.png",
@@ -53,94 +83,54 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   fontSize: 18,
                 ),
               ),
-              _buildOption(
-                index: 0,
-                icon: Icons.message,
-                title: "via SMS",
-                subtitle: "+1 111 ******99",
+              CustomTextFieldWg(
+                isFocused: _isFocusedEmail,
+                controller: _emailController,
+                focusNode: _emailFocusNode,
+                prefixIcon: IconlyBold.message,
+                hintText: "Email",
+                onTap: () {
+                  setState(() {
+                    _isFocusedEmail = true;
+                  });
+                },
               ),
-              _buildOption(
-                index: 1,
-                icon: Icons.email,
-                title: "via Email",
-                subtitle: "and***ley@yourdomain.com",
-              ),
-              DefaultButtonWg(
-                title: "Continue",
-                onPressed: () {
-                  // context.go(RoutePaths.sendCodeForgotPassword);
-                  // Navigator.pushNamed(context, RouteNames.sendCode);
-                  AppRoute.go(SendCodeForgotPassword());
+              BlocConsumer<ResetPasswordBloc, ResetPasswordState>(
+                listener: (context, state) {
+                  if (state is ResetPasswordSuccess) {
+                    AppRoute.go(
+                      SendCodeForgotPassword(
+                        emailOrPhone: _emailController.text.trim(),
+                        userId: state.response.userId,
+                      ),
+                    );
+                  } else if (state is ResetPasswordError) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.message),
+                        backgroundColor: AppColors.red,
+                      ),
+                    );
+                  }
+                },
+                builder: (context, state) {
+                  if (state is ResetPasswordLoading) {
+                    return Center(
+                      child: SpinKitFadingCircle(
+                        color: AppColors.primary(),
+                        size: 60.0,
+                      ),
+                    );
+                  } else {
+                    return DefaultButtonWg(
+                      title: "Continue",
+                      onPressed: resetPassword,
+                    );
+                  }
                 },
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildOption({
-    required int index,
-    required IconData icon,
-    required String title,
-    required String subtitle,
-  }) {
-    bool isSelected = _selectedIndex == index;
-
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedIndex = index;
-        });
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color:
-                isSelected
-                    ? AppColors.primary.blue400
-                    : AppColors.greyScale.grey200,
-            width: 2,
-          ),
-          borderRadius: BorderRadius.circular(20),
-          color: Colors.white,
-        ),
-        padding: EdgeInsets.all(24),
-        child: Row(
-          children: [
-            Container(
-              width: appW(80),
-              height: appH(80),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(40),
-                color: AppColors.primary.blue100,
-              ),
-              child: Center(
-                child: Icon(icon, size: 26, color: AppColors.primary.blue400),
-              ),
-            ),
-            SizedBox(width: 16),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: AppTextStyles.urbanist.medium(
-                    color: AppColors.greyScale.grey600,
-                    fontSize: 14,
-                  ),
-                ),
-                Text(
-                  subtitle,
-                  style: AppTextStyles.urbanist.bold(
-                    color: AppColors.black,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-          ],
         ),
       ),
     );

@@ -50,8 +50,6 @@ class _CreateNewPinState extends State<CreateNewPin> {
       backgroundColor: AppColors.white,
       appBar: ActionAppBarWg(
         onBackPressed: () {
-          // context.go(RoutePaths.fillYourProfile);
-          // Navigator.pop(context);
           AppRoute.close();
         },
         titleText: "Create New Pin",
@@ -132,8 +130,6 @@ class _CreateNewPinState extends State<CreateNewPin> {
             DefaultButtonWg(
               title: "Continue",
               onPressed: () {
-                // context.go(RoutePaths.fingerPrint);
-                // Navigator.pushNamed(context, RouteNames.fingerPrint);
                 AppRoute.go( Fingerprint());
               },
             ),
