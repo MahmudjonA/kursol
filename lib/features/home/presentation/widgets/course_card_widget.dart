@@ -64,7 +64,9 @@ class _CourseCardState extends State<CourseCard> {
               child: CachedNetworkImage(
                 imageUrl: widget.imagePath,
                 fit: BoxFit.cover,
-                errorWidget: (context, url, error) => const Icon(Icons.account_circle),
+                errorWidget:
+                    (context, url, error) =>
+                        Image.asset("assets/images/img.png"),
               ),
             ),
           ),

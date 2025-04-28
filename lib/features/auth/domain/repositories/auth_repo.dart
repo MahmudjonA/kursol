@@ -26,12 +26,6 @@ abstract class AuthRepo {
     required String newPassword,
     required String token,
   });
-  // Future<UserAccount> fillProfile({
-  //   required String image,
-  //   required String fullName,
-  //   required String userName,
-  //   required String email,
-  //   required String phone,
-  //   required String address,
-  // });
+
+  Future<void> logoutUser({required String refreshToken});
 }

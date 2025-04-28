@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../../../core/common/colors/app_colors.dart';
 import '../../../../../core/responsiveness/app_responsive.dart';
@@ -25,10 +26,28 @@ class ChatsWidget extends StatelessWidget {
         height: 60,
         child: Row(
           children: [
-            CircleAvatar(
-              radius: 30,
-              backgroundColor: Colors.transparent,
-              backgroundImage: AssetImage(imagePath), // загружаем изображение
+            Container(
+              width: appW(72),
+              height: appH(72),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.white,
+              ),
+              child: ClipOval(
+                child: CachedNetworkImage(
+                  imageUrl: imagePath,
+                  fit: BoxFit.cover,
+                  errorWidget:
+                      (context, url, error) => Icon(
+                        IconlyBold.user_3,
+                        color: AppColors.greyScale.grey400,
+                        size: appH(50),
+                      ),
+                  placeholder:
+                      (context, url) =>
+                          Center(child: CircularProgressIndicator()),
+                ),
+              ),
             ),
             SizedBox(width: appW(20)),
             Column(

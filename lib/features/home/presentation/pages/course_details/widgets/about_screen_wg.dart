@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
+import 'package:lms_system/core/route/rout_generator.dart';
 import 'package:lms_system/core/route/rout_names.dart';
+import 'package:lms_system/features/home/presentation/pages/mentor_profile/mentor_profile_page.dart';
 
 import '../../../../../../core/common/colors/app_colors.dart';
 import '../../../../../../core/text_styles/urbanist_text_style.dart';
+import '../../../../domain/entities/courses.dart';
 
 class AboutScreen extends StatefulWidget {
-  const AboutScreen({super.key});
+  final Course course;
+
+  const AboutScreen({super.key, required this.course});
 
   @override
   State<AboutScreen> createState() => _AboutScreenState();
@@ -29,8 +34,7 @@ class _AboutScreenState extends State<AboutScreen> {
           ),
           GestureDetector(
             onTap: () {
-              // context.push(RoutePaths.mentorProfile);
-              Navigator.pushNamed(context, RouteNames.mentorsProfile);
+              AppRoute.go(MentorProfilePage());
             },
             child: ListTile(
               leading: CircleAvatar(
@@ -39,7 +43,7 @@ class _AboutScreenState extends State<AboutScreen> {
                 ),
               ),
               title: Text(
-                'Jonathan Williams',
+                widget.course.instructor,
                 style: UrbanistTextStyles().bold(
                   fontSize: 22,
                   color: AppColors.black,

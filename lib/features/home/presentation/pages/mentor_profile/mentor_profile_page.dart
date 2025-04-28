@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
-import 'package:lms_system/features/course_details/presentation/widgets/review_screen_wg.dart';
 import '../../../../../core/common/colors/app_colors.dart';
 import '../../../../../core/responsiveness/app_responsive.dart';
 import '../../../../../core/route/rout_names.dart';
 import '../../../../../core/text_styles/urbanist_text_style.dart';
 import '../../../../home/presentation/widgets/chats_widget.dart';
 import '../../../../home/presentation/widgets/course_card_widget.dart';
+import '../../widgets/review_screen_wg.dart';
 
 class MentorProfilePage extends StatefulWidget {
   const MentorProfilePage({super.key});

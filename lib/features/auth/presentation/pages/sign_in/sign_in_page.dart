@@ -95,6 +95,17 @@ class _SignInPageState extends State<SignInPage> {
         });
   }
 
+  void saveAuthToken(String accessToken, String refreshToken) {
+    authLocalDataSource
+        .saveAuthToken(refreshToken, accessToken)
+        .then((_) {
+          LoggerService.info("Auth Token saved : $accessToken - $refreshToken");
+        })
+        .catchError((error) {
+          LoggerService.error("Error saving Auth Token: $error");
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -169,6 +180,7 @@ class _SignInPageState extends State<SignInPage> {
                           _emailController.text,
                           _passwordController.text,
                         );
+                        saveAuthToken(state.user.access, state.user.refresh);
                         AppRoute.go(MainPage());
                       } else if (state is LogInUserError) {
                         ScaffoldMessenger.of(context).showSnackBar(

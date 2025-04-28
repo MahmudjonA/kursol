@@ -40,3 +40,8 @@ class ResetNewPasswordEvent extends AuthEvent {
 
   const ResetNewPasswordEvent({required this.newPassword, required this.token});
 }
+class LogoutUserEvent extends AuthEvent {
+  final String refreshToken;
+
+  const LogoutUserEvent({required this.refreshToken});
+}

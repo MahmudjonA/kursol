@@ -129,4 +129,23 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       rethrow;
     }
   }
+
+  @override
+  Future<void> logoutUser({required String refreshToken}) async {
+    try {
+      final response = await dioClient.post(
+        ApiUrls.logout,
+        data: {'refresh_token': refreshToken},
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        LoggerService.info('Logout successful: ${response.data}');
+      } else {
+        LoggerService.warning("Logout failed: ${response.statusCode}");
+        throw Exception('Logout failed: ${response.statusCode}');
+      }
+    } catch (e) {
+      LoggerService.error('Error during new password creation: $e');
+      rethrow;
+    }
+  }
 }

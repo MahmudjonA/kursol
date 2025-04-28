@@ -17,17 +17,20 @@ class CourseModel extends Course {
 
   factory CourseModel.fromJson(Map<String, dynamic> json) {
     return CourseModel(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'],
-      category: json['category'],
-      price: json['price'],
-      image: json['image'],
-      isPublished: json['is_published'],
-      createdAt: json['created_at'],
-      instructor: json['instructor'],
+      id: json['id'] ?? '',
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      category: json['category'] ?? '',
+      price: json['price'] ?? 0.0,
+      image: json['image'] ?? '',
+      isPublished: json['is_published'] ?? false,
+      createdAt: json['created_at'] ?? '',
+      instructor: json['instructor'] ?? '',
       sections:
-          (json['sections'] as List).map((e) => Section.fromJson(e)).toList(),
+          (json['sections'] as List?)
+              ?.map((e) => Section.fromJson(e))
+              .toList() ??
+          [],
     );
   }
 }

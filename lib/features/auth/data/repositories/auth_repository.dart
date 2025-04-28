@@ -53,4 +53,9 @@ class AuthRepositoryImpl implements AuthRepo {
       token: token,
     );
   }
+
+  @override
+  Future<void> logoutUser({required String refreshToken}) {
+    return authRemoteDataSource.logoutUser(refreshToken: refreshToken);
+  }
 }

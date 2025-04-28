@@ -1,5 +1,18 @@
-import 'package:lms_system/features/home/data/models/courses_response_model.dart';
+import 'package:lms_system/features/home/data/models/course_model.dart';
+import 'package:lms_system/features/home/data/models/response_mentor.dart';
+
+import '../models/category_response_model.dart';
 
 abstract class HomeRemoteDataSource {
-  Future<CoursesResponseModel> getCourses({required int limit});
+  //! Courses
+  Future<List<CourseModel>> getPopularCourses({required int limit});
+
+  Future<CourseModel> getSingleCourses({required int id});
+  //! Category
+  Future<CategoryResponseModel> getCategories({required int limit});
+
+  //! Mentors
+  Future<MentorsResponseModel> getTopMentors({required int limit});
+
+  Future<MentorsResponseModel> getMentors({required int limit});
 }

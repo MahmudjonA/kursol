@@ -21,10 +21,10 @@ abstract class AuthRemoteDataSource {
 
   Future<ResetPasswordModel> resetPassword({required String emailOrPhone});
 
-
   Future<void> createNewPassword({
     required String newPassword,
     required String token,
   });
-}
 
+  Future<void> logoutUser({required String refreshToken});
+}

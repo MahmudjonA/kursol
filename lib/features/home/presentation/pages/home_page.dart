@@ -3,16 +3,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:iconly/iconly.dart';
 import 'package:lms_system/core/route/rout_generator.dart';
-import 'package:lms_system/core/route/rout_names.dart';
+import 'package:lms_system/features/home/presentation/bloc/category/category_bloc.dart';
+import 'package:lms_system/features/home/presentation/bloc/top_mentors/top_mentors_state.dart';
 import 'package:lms_system/features/home/presentation/pages/courses/popular_courses.dart';
+import 'package:lms_system/features/home/presentation/pages/mentors/mentors_page.dart';
+import 'package:lms_system/features/home/presentation/pages/notification/notification_page.dart';
+import 'package:lms_system/features/home/presentation/pages/search/search_page.dart';
 import '../../../../core/common/colors/app_colors.dart';
 import '../../../../core/common/widgets/custom_choice_chip_wg.dart';
 import '../../../../core/responsiveness/app_responsive.dart';
 import '../../../../core/text_styles/urbanist_text_style.dart';
+import '../bloc/category/category_state.dart';
 import '../bloc/courses/courses_bloc.dart';
 import '../bloc/courses/courses_state.dart';
 import '../bloc/home_event.dart';
+import '../bloc/top_mentors/top_mentors_bloc.dart';
 import '../widgets/course_card_widget.dart';
+import '../widgets/top_mentors.dart';
+import 'bookmark/bookmark_page.dart';
+import 'course_details/course_details_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,19 +33,20 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int selectedIndex = 0;
 
-  final List<String> options = [
-    '🔥 All',
-    '💡 3D Design',
-    '💰 Business',
-    '🎨 Design',
-  ];
+  // final List<String> options = [
+  //   '🔥 All',
+  //   '💡 3D Design',
+  //   '💰 Business',
+  //   '🎨 Design',
+  // ];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // BlocProvider.of<CourseBloc>(context).add(GetCourses(limit: 10));
-    context.read<CourseBloc>().add(GetCourses(limit: 10));
+    context.read<CourseBloc>().add(GetPopularCourses(limit: 10));
+    context.read<TopMentorsBloc>().add(GetTopMentors(limit: 10));
+    context.read<CategoryBloc>().add(GetCategoriesEvent(limit: 10));
   }
 
   @override
@@ -82,15 +92,13 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: Icon(IconlyLight.notification, size: appH(28)),
             onPressed: () {
-              // context.pushNamed(RouteNames.homeNotification);
-              Navigator.pushNamed(context, RouteNames.notification);
+              AppRoute.go(NotificationPage());
             },
           ),
           IconButton(
             icon: Icon(IconlyLight.bookmark, size: appH(28)),
             onPressed: () {
-              // context.pushNamed(RouteNames.homeBookmark);
-              Navigator.pushNamed(context, RouteNames.bookmark);
+              AppRoute.go(BookmarkPage());
             },
           ),
         ],
@@ -119,8 +127,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   onPressed: () {
-                    // context.pushNamed(RouteNames.homeSearch);
-                    Navigator.pushNamed(context, RouteNames.search);
+                    AppRoute.go(SearchPage());
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -157,8 +164,11 @@ class _HomePageState extends State<HomePage> {
                   scrollDirection: Axis.horizontal,
                   children: [
                     Image.asset('assets/images/Frame.png', fit: BoxFit.cover),
-                    Image.asset('assets/images/Frame.png', fit: BoxFit.cover),
-                    Image.asset('assets/images/Frame.png', fit: BoxFit.cover),
+                    Image.asset(
+                      'assets/images/discounts.png',
+                      fit: BoxFit.cover,
+                    ),
+                    Image.asset('assets/images/offer.png', fit: BoxFit.cover),
                   ],
                 ),
               ),
@@ -174,8 +184,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   TextButton(
                     onPressed: () {
-                      // context.pushNamed(RouteNames.homeMentors);
-                      Navigator.pushNamed(context, RouteNames.mentors);
+                      AppRoute.go(MentorsPage());
                     },
                     child: Text(
                       "See All",
@@ -188,22 +197,53 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               SizedBox(height: appH(10)),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    Row(
-                      children: [
-                        _column('assets/images/boy.png', 'Jacob'),
-                        _column('assets/images/boy.png', 'Claire'),
-                        _column('assets/images/boy.png', 'Priscilla'),
-                        _column('assets/images/boy.png', 'Wade'),
-                        _column('assets/images/boy.png', 'Kathryn'),
-                        _column('assets/images/boy.png', 'Alice'),
-                      ],
-                    ),
-                  ],
-                ),
+              BlocBuilder<TopMentorsBloc, TopMentorsState>(
+                builder: (context, state) {
+                  if (state is TopMentorsLoading) {
+                    return Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Loading...',
+                            style: UrbanistTextStyles().medium(
+                              fontSize: 18,
+                              color: AppColors.greyScale.grey600,
+                            ),
+                          ),
+                          SizedBox(height: appH(10)),
+                          LinearProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation(
+                              AppColors.primary.blue500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  } else if (state is TopMentorsLoaded) {
+                    final mentors = state.mentors.results;
+                    return mentors.isEmpty
+                        ? Center(child: Text('No mentors available'))
+                        : SizedBox(
+                          height: 120,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: state.mentors.count,
+                            itemBuilder: (context, index) {
+                              final mentor = mentors[index];
+                              return columnWg(
+                                mentor.avatarUrl ?? 'Null',
+                                mentor.fullName,
+                              );
+                            },
+                          ),
+                        );
+                  } else if (state is TopMentorsError) {
+                    return Center(child: Text('Error: ${state.message}'));
+                  } else {
+                    return SizedBox.shrink();
+                  }
+                },
               ),
               SizedBox(height: appH(10)),
               Row(
@@ -231,46 +271,42 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               SizedBox(height: appH(10)),
-              SizedBox(
-                height: appH(40),
-                child: ListView.builder(
-                  itemCount: options.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder:
-                      (context, index) => CustomChoiceChipWg(
-                        index: index,
-                        label: options[index],
-                        selectedIndex: selectedIndex,
-                        onSelected: (selected) {
-                          setState(() {
-                            selectedIndex = selected ? index : selectedIndex;
-                          });
+              BlocBuilder<CategoryBloc, CategoryState>(
+                builder: (context, state) {
+                  if (state is CategoryLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is CategoryLoaded) {
+                    final categories = state.categories; // список категорий
+                    return SizedBox(
+                      height: appH(40),
+                      child: ListView.builder(
+                        itemCount: categories.count,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          return CustomChoiceChipWg(
+                            index: index,
+                            label: categories.results[index].name,
+                            // название категории
+                            selectedIndex: selectedIndex,
+                            onSelected: (selected) {
+                              setState(() {
+                                selectedIndex =
+                                    selected ? index : selectedIndex;
+                                // тут можно добавить например отправку события для фильтрации курсов по категории
+                              });
+                            },
+                          );
                         },
                       ),
-                ),
+                    );
+                  } else if (state is CategoryError) {
+                    return Center(child: Text('Ошибка: ${state.message}'));
+                  }
+                  return const SizedBox.shrink(); // пусто, если начальное состояние
+                },
               ),
+
               SizedBox(height: appH(8)),
-              // ListView.builder(
-              //   shrinkWrap: true,
-              //   physics: NeverScrollableScrollPhysics(),
-              //   itemCount: 3,
-              //   itemBuilder: (context, index) {
-              //     return CourseCard(
-              //       onTap: () {
-              //         // context.pushNamed(RouteNames.courseDetails)
-              //         Navigator.pushNamed(context, RouteNames.courseDetails);
-              //       },
-              //       imagePath: 'assets/images/Rectangle2.png',
-              //       category: 'Entrepreneurship',
-              //       title: 'Digital Entrepren eur...',
-              //       price: 39,
-              //       oldPrice: 80,
-              //       rating: 4.8,
-              //       students: 8289,
-              //       onBookmarkPressed: () {},
-              //     );
-              //   },
-              // ),
               BlocBuilder<CourseBloc, CourseState>(
                 builder: (context, state) {
                   if (state is CourseLoading) {
@@ -285,15 +321,12 @@ class _HomePageState extends State<HomePage> {
                     return ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: courses.count,
+                      itemCount: courses.length,
                       itemBuilder: (context, index) {
-                        final course = courses.results[index];
+                        final course = courses[index];
                         return CourseCard(
                           onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              RouteNames.courseDetails,
-                            );
+                            AppRoute.go(CourseDetailsPage(id: course.id));
                           },
                           imagePath: course.image!,
                           category: course.category.toString(),
@@ -316,25 +349,6 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _column(String imagePath, String name) {
-    return Container(
-      margin: EdgeInsets.only(right: appW(15)),
-      child: Column(
-        children: [
-          CircleAvatar(radius: 36, backgroundImage: AssetImage(imagePath)),
-          SizedBox(height: appH(8)),
-          Text(
-            name,
-            style: UrbanistTextStyles().semiBold(
-              fontSize: 16,
-              color: AppColors.greyScale.grey900,
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -67,7 +67,6 @@ class ProfilePage extends StatelessWidget {
                 title: AppStrings.payment,
                 onPressed: () {
                   AppRoute.go(ProfilePaymentPage());
-
                 },
               ),
               // * Security
@@ -76,7 +75,6 @@ class ProfilePage extends StatelessWidget {
                 title: AppStrings.security,
                 onPressed: () {
                   AppRoute.go(ProfileSecurityPage());
-
                 },
               ),
               // * Language
@@ -87,7 +85,6 @@ class ProfilePage extends StatelessWidget {
                 onPressed: () {
                   // context.pushNamed(RouteNames.profileLanguage);
                   AppRoute.go(ProfileLanguagePage());
-
                 },
               ),
               Row(

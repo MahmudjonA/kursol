@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:iconly/iconly.dart';
 import 'package:lms_system/core/route/rout_generator.dart';
-import 'package:lms_system/features/auth/data/data_sources/local/auth_local_data_source.dart';
 import 'package:lms_system/features/auth/presentation/bloc/register_user/register_user_bloc.dart';
 import 'package:lms_system/features/auth/presentation/bloc/register_user/register_user_state.dart';
 import 'package:lms_system/features/auth/presentation/pages/sign_in/sign_in_page.dart';
@@ -13,10 +12,8 @@ import '../../../../../core/common/sizes/sizes.dart';
 import '../../../../../core/common/widgets/app_bar/action_app_bar_wg.dart';
 import '../../../../../core/common/widgets/buttons/default_button_wg.dart';
 import '../../../../../core/common/widgets/textfield/custom_text_field_wg.dart';
-import '../../../../../core/di/service_locator.dart';
 import '../../../../../core/responsiveness/app_responsive.dart';
 import '../../../../../core/text_styles/app_tex_style.dart';
-import '../../../../../core/utils/logger.dart';
 import '../../bloc/auth_event.dart';
 import '../../widgets/auth_or_continue_with_wg.dart';
 import '../../widgets/auth_sign_in_up_choice_wg.dart';
@@ -37,7 +34,6 @@ class _SignUpPageState extends State<SignUpPage> {
   final FocusNode _emailOrPhoneFocusNode = FocusNode();
   bool _obscureText = true;
   bool _useEmail = true;
-  final authLocalDataSource = sl<AuthLocalDataSource>();
 
   @override
   void initState() {
@@ -113,17 +109,6 @@ class _SignUpPageState extends State<SignUpPage> {
     context.read<RegisterUserBloc>().add(
       RegisterUser(email: emailOrPhone, password: password),
     );
-  }
-
-  void saveRememberMe(String email, String password) {
-    authLocalDataSource
-        .saveRememberMe(email, password)
-        .then((_) {
-          LoggerService.info("Remember Me saved : $email - $password");
-        })
-        .catchError((error) {
-          LoggerService.error("Error saving Remember Me: $error");
-        });
   }
 
   @override
@@ -227,14 +212,11 @@ class _SignUpPageState extends State<SignUpPage> {
                   BlocConsumer<RegisterUserBloc, RegisterUserState>(
                     listener: (context, state) {
                       if (state is RegisterUserSuccess) {
-                        saveRememberMe(
-                          _emailOrPhoneController.text,
-                          _passwordController.text,
-                        );
                         AppRoute.go(
                           SignUpConfirmEmailOrPassword(
                             userId: state.registerUser.userId,
                             emailOrPhone: _emailOrPhoneController.text,
+                            password: _passwordController.text,
                           ),
                         );
                       } else if (state is RegisterUserError) {

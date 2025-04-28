@@ -10,16 +10,21 @@ import '../../../../../../core/common/widgets/app_bar/action_app_bar_wg.dart';
 import '../../../../../../core/common/widgets/buttons/default_button_wg.dart';
 import '../../../../../../core/responsiveness/app_responsive.dart';
 import '../../../../../../core/text_styles/app_tex_style.dart';
+import '../../../../../core/di/service_locator.dart';
+import '../../../../../core/utils/logger.dart';
+import '../../../data/data_sources/local/auth_local_data_source.dart';
 import '../../bloc/auth_event.dart';
 
 class SignUpConfirmEmailOrPassword extends StatefulWidget {
   final String emailOrPhone;
+  final String password;
   final int userId;
 
   const SignUpConfirmEmailOrPassword({
     super.key,
     required this.userId,
     required this.emailOrPhone,
+    required this.password,
   });
 
   @override
@@ -29,6 +34,8 @@ class SignUpConfirmEmailOrPassword extends StatefulWidget {
 
 class _SignUpConfirmEmailOrPasswordState
     extends State<SignUpConfirmEmailOrPassword> {
+  final authLocalDataSource = sl<AuthLocalDataSource>();
+
   List<TextEditingController> controllers = List.generate(
     4,
     (_) => TextEditingController(),
@@ -77,6 +84,28 @@ class _SignUpConfirmEmailOrPasswordState
         ),
       );
     }
+  }
+
+  void saveRememberMe(String email, String password) {
+    authLocalDataSource
+        .saveRememberMe(email, password)
+        .then((_) {
+          LoggerService.info("Remember Me saved : $email - $password");
+        })
+        .catchError((error) {
+          LoggerService.error("Error saving Remember Me: $error");
+        });
+  }
+
+  void saveAuthToken(String accessToken, String refreshToken) {
+    authLocalDataSource
+        .saveAuthToken(refreshToken, accessToken)
+        .then((_) {
+          LoggerService.info("Auth Token saved : $accessToken - $refreshToken");
+        })
+        .catchError((error) {
+          LoggerService.error("Error saving Auth Token: $error");
+        });
   }
 
   @override
@@ -160,7 +189,11 @@ class _SignUpConfirmEmailOrPasswordState
             BlocConsumer<ConfirmEmailBloc, ConfirmEmailState>(
               listener: (context, state) {
                 if (state is ConfirmEmailSuccess) {
-                  // AppRoute.go(FillProfilePage());
+                  saveRememberMe(widget.emailOrPhone, widget.password);
+                  saveAuthToken(
+                    state.confirmEmail.access,
+                    state.confirmEmail.refresh,
+                  );
                   AppRoute.go(MainPage());
                 } else if (state is ConfirmEmailError) {
                   ScaffoldMessenger.of(context).showSnackBar(

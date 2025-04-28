@@ -8,7 +8,7 @@ class CourseBloc extends Bloc<HomeEvent, CourseState> {
   final CoursesUseCase getCoursesUseCase;
 
   CourseBloc(this.getCoursesUseCase) : super(CourseInitial()) {
-    on<GetCourses>(onGetCourses);
+    on<GetPopularCourses>(onGetCourses);
   }
 
   Future<void> onGetCourses(event, emit) async {
