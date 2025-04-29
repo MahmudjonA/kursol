@@ -3,6 +3,8 @@ import 'package:lms_system/features/home/data/models/course_model.dart';
 import 'package:lms_system/features/home/data/models/response_mentor.dart';
 import 'package:lms_system/features/home/domain/entities/category_responce.dart';
 import 'package:lms_system/features/home/domain/entities/response_mentor.dart';
+import 'package:lms_system/features/home/domain/entities/response_wishlist.dart';
+import 'package:lms_system/features/home/domain/entities/search_response.dart';
 import 'package:lms_system/features/home/domain/repositories/home_repo.dart';
 
 class HomeRepositoryImpl implements HomeRepo {
@@ -33,5 +35,18 @@ class HomeRepositoryImpl implements HomeRepo {
   @override
   Future<CategoryResponse> getCategories({required int limit}) async {
     return await homeRemoteDataSource.getCategories(limit: limit);
+  }
+
+  @override
+  Future<SearchResponse> search({required String query}) async {
+    return await homeRemoteDataSource.search(query: query);
+  }
+
+  @override
+  Future<WishlistResponse> getWishlist({
+    required int limit,
+    required String token,
+  }) async {
+    return await homeRemoteDataSource.getWishlist(limit: limit, token: token);
   }
 }

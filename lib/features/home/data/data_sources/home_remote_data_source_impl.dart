@@ -3,6 +3,8 @@ import 'package:lms_system/features/home/data/data_sources/home_remote_data_sour
 import 'package:lms_system/features/home/data/models/category_response_model.dart';
 import 'package:lms_system/features/home/data/models/course_model.dart';
 import 'package:lms_system/features/home/data/models/response_mentor.dart';
+import 'package:lms_system/features/home/data/models/response_wishlist_model.dart';
+import 'package:lms_system/features/home/data/models/search_response_model.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/logger.dart';
 
@@ -112,6 +114,52 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
       }
     } catch (e) {
       LoggerService.error('Error while fetching categories: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<SearchResponseModel> search({required String query}) async {
+    try {
+      final response = await dioClient.get("${ApiUrls.search}$query");
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        LoggerService.info(
+          'Search results fetched successfully: ${response.data}',
+        );
+        return SearchResponseModel.fromJson(response.data);
+      } else {
+        LoggerService.warning(
+          "Failed to fetch search results: ${response.statusCode}",
+        );
+        throw Exception(
+          'Failed to fetch search results: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      LoggerService.error('Error while fetching search results: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<ResponseWishlistModel> getWishlist({
+    required int limit,
+    required String token,
+  }) async {
+    try {
+      dioClient.setToken(token);
+      final response = await dioClient.get("${ApiUrls.wishlist}$limit");
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        LoggerService.info('Wishlist fetched successfully: ${response.data}');
+        return ResponseWishlistModel.fromJson(response.data);
+      } else {
+        LoggerService.warning(
+          "Failed to fetch wishlist: ${response.statusCode}",
+        );
+        throw Exception('Failed to fetch wishlist: ${response.statusCode}');
+      }
+    } catch (e) {
+      LoggerService.error('Error while fetching wishlist: $e');
       rethrow;
     }
   }

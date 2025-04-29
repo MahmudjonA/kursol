@@ -12,6 +12,7 @@ import 'core/di/service_locator.dart';
 import 'features/home/presentation/bloc/mentors/mentors_bloc.dart';
 import 'features/home/presentation/bloc/single_course/single_course_bloc.dart';
 import 'features/home/presentation/bloc/top_mentors/top_mentors_bloc.dart';
+import 'features/home/presentation/bloc/wishlist/wishlist_bloc.dart';
 
 class MyBlocProvider extends StatelessWidget {
   const MyBlocProvider({super.key, required this.child});
@@ -45,6 +46,7 @@ class MyBlocProvider extends StatelessWidget {
         BlocProvider<TopMentorsBloc>(create: (context) => sl<TopMentorsBloc>()),
         BlocProvider<MentorBloc>(create: (context) => sl<MentorBloc>()),
         BlocProvider<CategoryBloc>(create: (context) => sl<CategoryBloc>()),
+        BlocProvider<WishlistBloc>(create: (context) => sl<WishlistBloc>()),
       ],
       child: child,
     );

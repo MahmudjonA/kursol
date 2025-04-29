@@ -34,3 +34,12 @@ class GetMentors extends HomeEvent {
 
   GetMentors({required this.limit});
 }
+
+// ! Wishlist
+
+class GetWishlistEvent extends HomeEvent {
+  final int limit;
+  final String token;
+
+  GetWishlistEvent({required this.limit, required this.token});
+}

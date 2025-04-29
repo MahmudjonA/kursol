@@ -11,8 +11,10 @@ import 'package:lms_system/features/home/presentation/pages/notification/notific
 import 'package:lms_system/features/home/presentation/pages/search/search_page.dart';
 import '../../../../core/common/colors/app_colors.dart';
 import '../../../../core/common/widgets/custom_choice_chip_wg.dart';
+import '../../../../core/di/service_locator.dart';
 import '../../../../core/responsiveness/app_responsive.dart';
 import '../../../../core/text_styles/urbanist_text_style.dart';
+import '../../../auth/data/data_sources/local/auth_local_data_source.dart';
 import '../bloc/category/category_state.dart';
 import '../bloc/courses/courses_bloc.dart';
 import '../bloc/courses/courses_state.dart';
@@ -32,13 +34,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int selectedIndex = 0;
-
-  // final List<String> options = [
-  //   '🔥 All',
-  //   '💡 3D Design',
-  //   '💰 Business',
-  //   '🎨 Design',
-  // ];
+  Map<int, String> categoryNames = {};
 
   @override
   void initState() {
@@ -258,7 +254,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   TextButton(
                     onPressed: () {
-                      AppRoute.open(PopularCourses());
+                      AppRoute.go(PopularCourses());
                     },
                     child: Text(
                       "See All",
@@ -274,9 +270,18 @@ class _HomePageState extends State<HomePage> {
               BlocBuilder<CategoryBloc, CategoryState>(
                 builder: (context, state) {
                   if (state is CategoryLoading) {
-                    return const Center(child: CircularProgressIndicator());
+                    return Center(
+                      child: SpinKitFadingCircle(
+                        color: AppColors.primary.blue500,
+                        size: 60.0,
+                      ),
+                    );
                   } else if (state is CategoryLoaded) {
-                    final categories = state.categories; // список категорий
+                    final categories = state.categories;
+                    categoryNames = {
+                      for (var category in categories.results)
+                        category.id: category.name,
+                    };
                     return SizedBox(
                       height: appH(40),
                       child: ListView.builder(
@@ -286,13 +291,11 @@ class _HomePageState extends State<HomePage> {
                           return CustomChoiceChipWg(
                             index: index,
                             label: categories.results[index].name,
-                            // название категории
                             selectedIndex: selectedIndex,
                             onSelected: (selected) {
                               setState(() {
                                 selectedIndex =
                                     selected ? index : selectedIndex;
-                                // тут можно добавить например отправку события для фильтрации курсов по категории
                               });
                             },
                           );
@@ -302,7 +305,7 @@ class _HomePageState extends State<HomePage> {
                   } else if (state is CategoryError) {
                     return Center(child: Text('Ошибка: ${state.message}'));
                   }
-                  return const SizedBox.shrink(); // пусто, если начальное состояние
+                  return const SizedBox.shrink();
                 },
               ),
 
@@ -329,7 +332,7 @@ class _HomePageState extends State<HomePage> {
                             AppRoute.go(CourseDetailsPage(id: course.id));
                           },
                           imagePath: course.image!,
-                          category: course.category.toString(),
+                          category: categoryNames[course.category] ?? 'Unknown',
                           title: course.title,
                           price: double.tryParse(course.price) ?? 0,
                           oldPrice: 80,

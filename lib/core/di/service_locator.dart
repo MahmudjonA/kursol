@@ -6,6 +6,7 @@ import 'package:lms_system/features/auth/data/repositories/auth_repository.dart'
 import 'package:lms_system/features/auth/domain/repositories/auth_repo.dart';
 import 'package:lms_system/features/auth/domain/use_cases/registration_use_case.dart';
 import 'package:lms_system/features/home/data/data_sources/home_remote_data_source.dart';
+import 'package:lms_system/features/home/domain/use_cases/wishlist_use_case.dart';
 import '../../features/auth/data/data_sources/local/auth_local_data_source.dart';
 import '../../features/auth/data/data_sources/local/auth_local_remote_data_source_impl.dart';
 import '../../features/auth/data/data_sources/remote/auth_remote_data_source_impl.dart';
@@ -32,6 +33,7 @@ import '../../features/home/presentation/bloc/courses/courses_bloc.dart';
 import '../../features/home/presentation/bloc/mentors/mentors_bloc.dart';
 import '../../features/home/presentation/bloc/single_course/single_course_bloc.dart';
 import '../../features/home/presentation/bloc/top_mentors/top_mentors_bloc.dart';
+import '../../features/home/presentation/bloc/wishlist/wishlist_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -80,6 +82,7 @@ Future<void> setup() async {
   sl.registerLazySingleton(() => TopMentorsUseCase(sl()));
   sl.registerLazySingleton(() => MentorsUseCase(sl()));
   sl.registerLazySingleton(() => CategoryUseCase(sl()));
+  sl.registerLazySingleton(() => WishlistUseCase(sl()));
 
   //! Bloc
   // * Auth
@@ -94,4 +97,5 @@ Future<void> setup() async {
   sl.registerLazySingleton(() => TopMentorsBloc(sl()));
   sl.registerLazySingleton(() => MentorBloc(sl()));
   sl.registerLazySingleton(() => CategoryBloc(sl()));
+  sl.registerLazySingleton(() => WishlistBloc(sl()));
 }

@@ -23,4 +23,10 @@ abstract class ApiUrls {
   //! Mentors
   static const String mentors = 'mentors/?limit=';
   static const String topMentors = 'mentors/top/?limit=';
+
+  //! Search
+  static const String search = 'search/search/?q=';
+
+  //! Wishlist
+  static const String wishlist = 'wishlist/?limit=';
 }
