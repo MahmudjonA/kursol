@@ -12,6 +12,7 @@ class CourseModel extends Course {
     required super.instructor,
     required super.sections,
     required super.category,
+    required super.categoryName,
     required super.image,
   });
 
@@ -21,6 +22,7 @@ class CourseModel extends Course {
       title: json['title'] ?? '',
       description: json['description'] ?? '',
       category: json['category'] ?? '',
+      categoryName: json['category_name'] ?? '',
       price: json['price'] ?? 0.0,
       image: json['image'] ?? '',
       isPublished: json['is_published'] ?? false,

@@ -25,13 +25,6 @@ class PopularCourses extends StatefulWidget {
 class _PopularCoursesState extends State<PopularCourses> {
   int selectedIndex = 0;
 
-  final List<String> options = [
-    '🔥 All',
-    '💡 3D Design',
-    '💰 Business',
-    '🎨 Design',
-  ];
-
   @override
   void initState() {
     // TODO: implement initState
@@ -67,7 +60,7 @@ class _PopularCoursesState extends State<PopularCourses> {
                   if (state is CategoryLoading) {
                     return Center(
                       child: SpinKitFadingCircle(
-                        color: AppColors.primary.blue500,
+                        color: AppColors.white,
                         size: 60.0,
                       ),
                     );
@@ -115,9 +108,9 @@ class _PopularCoursesState extends State<PopularCourses> {
                     return ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: courses.length,
+                      itemCount: courses.count,
                       itemBuilder: (context, index) {
-                        final course = courses[index];
+                        final course = courses.results[index];
                         return CourseCard(
                           onTap: () {
                             AppRoute.go(CourseDetailsPage(id: course.id));

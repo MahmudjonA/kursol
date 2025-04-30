@@ -9,18 +9,14 @@ class SearchResponseModel extends SearchResponse {
     return SearchResponseModel(
       courses:
           (json['courses'] as List<dynamic>?)
-              ?.map(
-                (course) =>
-                    CourseModel.fromJson(course as Map<String, dynamic>),
-              )
-              .toList(),
+              ?.map((e) => CourseModel.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
       mentors:
           (json['mentors'] as List<dynamic>?)
-              ?.map(
-                (mentor) =>
-                    MentorsModel.fromJson(mentor as Map<String, dynamic>),
-              )
-              .toList(),
+              ?.map((e) => MentorsModel.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
     );
   }
 }

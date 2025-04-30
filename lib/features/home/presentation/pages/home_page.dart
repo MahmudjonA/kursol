@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:iconly/iconly.dart';
 import 'package:lms_system/core/route/rout_generator.dart';
 import 'package:lms_system/features/home/presentation/bloc/category/category_bloc.dart';
@@ -9,12 +8,11 @@ import 'package:lms_system/features/home/presentation/pages/courses/popular_cour
 import 'package:lms_system/features/home/presentation/pages/mentors/mentors_page.dart';
 import 'package:lms_system/features/home/presentation/pages/notification/notification_page.dart';
 import 'package:lms_system/features/home/presentation/pages/search/search_page.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../../../core/common/colors/app_colors.dart';
 import '../../../../core/common/widgets/custom_choice_chip_wg.dart';
-import '../../../../core/di/service_locator.dart';
 import '../../../../core/responsiveness/app_responsive.dart';
 import '../../../../core/text_styles/urbanist_text_style.dart';
-import '../../../auth/data/data_sources/local/auth_local_data_source.dart';
 import '../bloc/category/category_state.dart';
 import '../bloc/courses/courses_bloc.dart';
 import '../bloc/courses/courses_state.dart';
@@ -34,7 +32,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int selectedIndex = 0;
-  Map<int, String> categoryNames = {};
 
   @override
   void initState() {
@@ -123,7 +120,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   onPressed: () {
-                    AppRoute.go(SearchPage());
+                    AppRoute.open(SearchPage());
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -196,24 +193,28 @@ class _HomePageState extends State<HomePage> {
               BlocBuilder<TopMentorsBloc, TopMentorsState>(
                 builder: (context, state) {
                   if (state is TopMentorsLoading) {
-                    return Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'Loading...',
-                            style: UrbanistTextStyles().medium(
-                              fontSize: 18,
-                              color: AppColors.greyScale.grey600,
+                    return SizedBox(
+                      height: 120,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 4,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: EdgeInsets.only(right: appW(12)),
+                            child: Shimmer.fromColors(
+                              baseColor: Colors.grey[300]!,
+                              highlightColor: Colors.grey[100]!,
+                              child: Container(
+                                width: appW(90),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: EdgeInsets.all(appW(8)),
+                              ),
                             ),
-                          ),
-                          SizedBox(height: appH(10)),
-                          LinearProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation(
-                              AppColors.primary.blue500,
-                            ),
-                          ),
-                        ],
+                          );
+                        },
                       ),
                     );
                   } else if (state is TopMentorsLoaded) {
@@ -270,18 +271,32 @@ class _HomePageState extends State<HomePage> {
               BlocBuilder<CategoryBloc, CategoryState>(
                 builder: (context, state) {
                   if (state is CategoryLoading) {
-                    return Center(
-                      child: SpinKitFadingCircle(
-                        color: AppColors.primary.blue500,
-                        size: 60.0,
+                    return SizedBox(
+                      height: 50,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 4,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: EdgeInsets.only(right: appW(12)),
+                            child: Shimmer.fromColors(
+                              baseColor: Colors.grey[300]!,
+                              highlightColor: Colors.grey[100]!,
+                              child: Container(
+                                width: appW(90),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: EdgeInsets.all(appW(8)),
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     );
                   } else if (state is CategoryLoaded) {
                     final categories = state.categories;
-                    categoryNames = {
-                      for (var category in categories.results)
-                        category.id: category.name,
-                    };
                     return SizedBox(
                       height: appH(40),
                       child: ListView.builder(
@@ -308,15 +323,33 @@ class _HomePageState extends State<HomePage> {
                   return const SizedBox.shrink();
                 },
               ),
-
               SizedBox(height: appH(8)),
               BlocBuilder<CourseBloc, CourseState>(
                 builder: (context, state) {
                   if (state is CourseLoading) {
-                    return Center(
-                      child: SpinKitFadingCircle(
-                        color: AppColors.primary.blue500,
-                        size: 60.0,
+                    return SizedBox(
+                      height: 320,
+                      child: ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        itemCount: 4,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: EdgeInsets.only(top: appW(12)),
+                            child: Shimmer.fromColors(
+                              baseColor: Colors.grey[300]!,
+                              highlightColor: Colors.grey[100]!,
+                              child: Container(
+                                height: appH(120),
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: EdgeInsets.all(appW(8)),
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     );
                   } else if (state is CourseLoaded) {
@@ -324,15 +357,15 @@ class _HomePageState extends State<HomePage> {
                     return ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: courses.length,
+                      itemCount: courses.count,
                       itemBuilder: (context, index) {
-                        final course = courses[index];
+                        final course = courses.results[index];
                         return CourseCard(
                           onTap: () {
                             AppRoute.go(CourseDetailsPage(id: course.id));
                           },
                           imagePath: course.image!,
-                          category: categoryNames[course.category] ?? 'Unknown',
+                          category: course.categoryName!,
                           title: course.title,
                           price: double.tryParse(course.price) ?? 0,
                           oldPrice: 80,

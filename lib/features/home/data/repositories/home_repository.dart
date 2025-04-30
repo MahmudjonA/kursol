@@ -1,6 +1,9 @@
 import 'package:lms_system/features/home/data/data_sources/home_remote_data_source.dart';
+import 'package:lms_system/features/home/data/models/category_response_model.dart';
 import 'package:lms_system/features/home/data/models/course_model.dart';
+import 'package:lms_system/features/home/data/models/courses_response_model.dart';
 import 'package:lms_system/features/home/data/models/response_mentor.dart';
+import 'package:lms_system/features/home/data/models/search_response_model.dart';
 import 'package:lms_system/features/home/domain/entities/category_responce.dart';
 import 'package:lms_system/features/home/domain/entities/response_mentor.dart';
 import 'package:lms_system/features/home/domain/entities/response_wishlist.dart';
@@ -13,7 +16,7 @@ class HomeRepositoryImpl implements HomeRepo {
   HomeRepositoryImpl({required this.homeRemoteDataSource});
 
   @override
-  Future<List<CourseModel>> getPopularCourses({required int limit}) async {
+  Future<CoursesResponseModel> getPopularCourses({required int limit}) async {
     return await homeRemoteDataSource.getPopularCourses(limit: limit);
   }
 
@@ -38,7 +41,7 @@ class HomeRepositoryImpl implements HomeRepo {
   }
 
   @override
-  Future<SearchResponse> search({required String query}) async {
+  Future<SearchResponseModel> search({required String query}) async {
     return await homeRemoteDataSource.search(query: query);
   }
 

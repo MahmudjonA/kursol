@@ -14,7 +14,10 @@ class WishlistBloc extends Bloc<HomeEvent, WishlistState> {
   Future<void> onGetWishlist(event, emit) async {
     emit(WishlistLoading());
     try {
-      final wishlist = await wishlistUseCase(limit: event.limit, token: event.token);
+      final wishlist = await wishlistUseCase(
+        limit: event.limit,
+        token: event.token,
+      );
       emit(WishlistLoaded(wishlistResponse: wishlist));
     } catch (e) {
       emit(WishlistError(message: e.toString()));

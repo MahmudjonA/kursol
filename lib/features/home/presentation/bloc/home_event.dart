@@ -43,3 +43,9 @@ class GetWishlistEvent extends HomeEvent {
 
   GetWishlistEvent({required this.limit, required this.token});
 }
+// ! Search
+class SearchEvent extends HomeEvent {
+  final String query;
+
+  SearchEvent({required this.query});
+}

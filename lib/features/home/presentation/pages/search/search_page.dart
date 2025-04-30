@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:iconly/iconly.dart';
+import 'package:lms_system/features/home/presentation/bloc/home_event.dart';
 import 'package:lms_system/features/home/presentation/pages/search/search_history_body.dart';
 import 'package:lms_system/features/home/presentation/pages/search/search_result_body.dart';
-
+import 'package:lms_system/features/main_page.dart';
 import '../../../../../core/common/colors/app_colors.dart';
 import '../../../../../core/common/widgets/custom_choice_chip_wg.dart';
 import '../../../../../core/responsiveness/app_responsive.dart';
+import '../../../../../core/route/rout_generator.dart';
 import '../../../../../core/text_styles/urbanist_text_style.dart';
+import '../../bloc/search/search_bloc.dart';
+import '../../bloc/search/search_state.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -32,14 +38,7 @@ class _SearchPageState extends State<SearchPage> {
 
   int selectedRatingIndex = 0;
 
-  final List<String> optionsRating = [
-    'All',
-    '5',
-    '4',
-    '3',
-    '2',
-    '1',
-  ];
+  final List<String> optionsRating = ['All', '5', '4', '3', '2', '1'];
 
   @override
   void dispose() {
@@ -53,6 +52,7 @@ class _SearchPageState extends State<SearchPage> {
       _query = query;
       _isFocused = false;
     });
+    context.read<SearchBloc>().add(SearchEvent(query: query));
   }
 
   @override
@@ -63,17 +63,25 @@ class _SearchPageState extends State<SearchPage> {
         scrolledUnderElevation: 0,
         backgroundColor: AppColors.greyScale.grey50,
         automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: Icon(IconlyLight.arrow_left, size: appH(25)),
+          onPressed: () {
+            AppRoute.go(MainPage());
+          },
+        ),
         title: Container(
           height: appH(53),
           decoration: BoxDecoration(
-            color: _isFocused
-                ? const Color(0xffEFF3FF)
-                : AppColors.greyScale.grey100,
+            color:
+                _isFocused
+                    ? const Color(0xffEFF3FF)
+                    : AppColors.greyScale.grey100,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: _isFocused
-                  ? AppColors.primary.blue500
-                  : AppColors.greyScale.grey100,
+              color:
+                  _isFocused
+                      ? AppColors.primary.blue500
+                      : AppColors.greyScale.grey100,
               width: 2,
             ),
           ),
@@ -125,9 +133,30 @@ class _SearchPageState extends State<SearchPage> {
           ),
         ),
       ),
-      body: _query.isEmpty
-          ? SearchHistoryBody()
-          : SearchResultBody(query: _query),
+      body:
+          _query.isEmpty
+              ? const SearchHistoryBody()
+              : BlocBuilder<SearchBloc, SearchState>(
+                builder: (context, state) {
+                  if (state is SearchLoading) {
+                    return Center(
+                      child: SpinKitFadingCircle(
+                        color: AppColors.primary.blue500,
+                        size: 60.0,
+                      ),
+                    );
+                  } else if (state is SearchLoaded) {
+                    return SearchResultBody(
+                      searchResponse: state.searchResponse!,
+                      query: _query,
+                    );
+                  } else if (state is SearchError) {
+                    return Center(child: Text('Error: ${state.message}'));
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                },
+              ),
     );
   }
 
@@ -174,16 +203,18 @@ class _SearchPageState extends State<SearchPage> {
                       child: ListView.builder(
                         itemCount: options.length,
                         scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) => CustomChoiceChipWg(
-                          index: index,
-                          label: options[index],
-                          selectedIndex: selectedIndex,
-                          onSelected: (selected) {
-                            setModalState(() {
-                              selectedIndex = selected ? index : selectedIndex;
-                            });
-                          },
-                        ),
+                        itemBuilder:
+                            (context, index) => CustomChoiceChipWg(
+                              index: index,
+                              label: options[index],
+                              selectedIndex: selectedIndex,
+                              onSelected: (selected) {
+                                setModalState(() {
+                                  selectedIndex =
+                                      selected ? index : selectedIndex;
+                                });
+                              },
+                            ),
                       ),
                     ),
                     // ! Category check bar
@@ -235,18 +266,19 @@ class _SearchPageState extends State<SearchPage> {
                       child: ListView.builder(
                         itemCount: optionsRating.length,
                         scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) => CustomChoiceChipWg(
-                          showIcon: true,
-                          index: index,
-                          label: optionsRating[index],
-                          selectedIndex: selectedRatingIndex,
-                          onSelected: (selected) {
-                            setModalState(() {
-                              selectedRatingIndex =
-                                  selected ? index : selectedRatingIndex;
-                            });
-                          },
-                        ),
+                        itemBuilder:
+                            (context, index) => CustomChoiceChipWg(
+                              showIcon: true,
+                              index: index,
+                              label: optionsRating[index],
+                              selectedIndex: selectedRatingIndex,
+                              onSelected: (selected) {
+                                setModalState(() {
+                                  selectedRatingIndex =
+                                      selected ? index : selectedRatingIndex;
+                                });
+                              },
+                            ),
                       ),
                     ),
                     //! Rating check bar
@@ -266,8 +298,9 @@ class _SearchPageState extends State<SearchPage> {
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primary.blue100,
-                              padding:
-                                  EdgeInsets.symmetric(horizontal: appW(30)),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: appW(30),
+                              ),
                               minimumSize: const Size(0, 58),
                             ),
                             child: Text(
@@ -287,8 +320,9 @@ class _SearchPageState extends State<SearchPage> {
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primary.blue500,
-                              padding:
-                                  EdgeInsets.symmetric(horizontal: appW(30)),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: appW(30),
+                              ),
                               minimumSize: const Size(0, 58),
                             ),
                             child: Text(

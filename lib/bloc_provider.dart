@@ -10,6 +10,7 @@ import 'package:lms_system/features/home/presentation/bloc/category/category_blo
 import 'package:lms_system/features/home/presentation/bloc/courses/courses_bloc.dart';
 import 'core/di/service_locator.dart';
 import 'features/home/presentation/bloc/mentors/mentors_bloc.dart';
+import 'features/home/presentation/bloc/search/search_bloc.dart';
 import 'features/home/presentation/bloc/single_course/single_course_bloc.dart';
 import 'features/home/presentation/bloc/top_mentors/top_mentors_bloc.dart';
 import 'features/home/presentation/bloc/wishlist/wishlist_bloc.dart';
@@ -47,6 +48,7 @@ class MyBlocProvider extends StatelessWidget {
         BlocProvider<MentorBloc>(create: (context) => sl<MentorBloc>()),
         BlocProvider<CategoryBloc>(create: (context) => sl<CategoryBloc>()),
         BlocProvider<WishlistBloc>(create: (context) => sl<WishlistBloc>()),
+        BlocProvider<SearchBloc>(create: (context) => sl<SearchBloc>()),
       ],
       child: child,
     );

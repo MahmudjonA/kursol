@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:iconly/iconly.dart';
 import 'package:lms_system/core/route/rout_generator.dart';
 import 'package:lms_system/features/home/presentation/bloc/mentors/mentors_bloc.dart';
@@ -42,7 +43,12 @@ class _MentorsPageState extends State<MentorsPage> {
         child: BlocBuilder<MentorBloc, MentorState>(
           builder: (context, state) {
             if (state is MentorLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(
+                child: SpinKitFadingCircle(
+                  color: AppColors.primary.blue500,
+                  size: 60.0,
+                ),
+              );
             } else if (state is MentorLoaded) {
               final mentors = state.mentors.results;
               return ListView.builder(
@@ -50,8 +56,7 @@ class _MentorsPageState extends State<MentorsPage> {
                 itemBuilder: (BuildContext context, int index) {
                   final mentor = mentors[index];
                   return ChatsWidget(
-                    imagePath:
-                        mentor.avatarUrl ?? 'Null',
+                    imagePath: mentor.avatarUrl ?? 'Null',
                     name: mentor.fullName,
                     jobTitle: mentor.expertiseDisplay,
                   );

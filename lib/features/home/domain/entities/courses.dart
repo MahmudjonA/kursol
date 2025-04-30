@@ -5,6 +5,7 @@ class Course {
   final String title;
   final String description;
   final int? category;
+  final String? categoryName;
   final String price;
   final String? image;
   final bool isPublished;
@@ -17,6 +18,7 @@ class Course {
     required this.title,
     required this.description,
     this.category,
+    this.categoryName,
     required this.price,
     this.image,
     required this.isPublished,
@@ -24,5 +26,4 @@ class Course {
     required this.instructor,
     required this.sections,
   });
-
 }

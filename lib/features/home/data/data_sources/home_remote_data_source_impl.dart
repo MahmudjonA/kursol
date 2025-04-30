@@ -2,6 +2,7 @@ import 'package:lms_system/core/common/api_urls.dart';
 import 'package:lms_system/features/home/data/data_sources/home_remote_data_source.dart';
 import 'package:lms_system/features/home/data/models/category_response_model.dart';
 import 'package:lms_system/features/home/data/models/course_model.dart';
+import 'package:lms_system/features/home/data/models/courses_response_model.dart';
 import 'package:lms_system/features/home/data/models/response_mentor.dart';
 import 'package:lms_system/features/home/data/models/response_wishlist_model.dart';
 import 'package:lms_system/features/home/data/models/search_response_model.dart';
@@ -12,16 +13,14 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   final DioClient dioClient = DioClient();
 
   @override
-  Future<List<CourseModel>> getPopularCourses({required int limit}) async {
+  Future<CoursesResponseModel> getPopularCourses({required int limit}) async {
     try {
       final response = await dioClient.get("${ApiUrls.popularCourses}$limit");
       if (response.statusCode == 200 || response.statusCode == 201) {
         LoggerService.info(
           'Popular courses fetched successfully: ${response.data}',
         );
-        return (response.data as List)
-            .map((json) => CourseModel.fromJson(json))
-            .toList();
+        return CoursesResponseModel.fromJson(response.data);
       } else {
         LoggerService.warning(
           "Failed to fetch popular courses: ${response.statusCode}",

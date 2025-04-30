@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../../../core/common/colors/app_colors.dart';
 import '../../../../../core/responsiveness/app_responsive.dart';
 import '../../../../../core/text_styles/urbanist_text_style.dart';
@@ -8,7 +7,6 @@ class NotFoundPage extends StatefulWidget {
   const NotFoundPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _NotFoundPageState createState() => _NotFoundPageState();
 }
 

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart' show SpinKitFadingCircle;
 import 'package:iconly/iconly.dart';
+import 'package:lms_system/core/utils/logger.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../../../../core/common/colors/app_colors.dart';
 import '../../../../../core/common/widgets/app_bar/action_app_bar_wg.dart';
 import '../../../../../core/common/widgets/custom_choice_chip_wg.dart';
@@ -9,6 +11,8 @@ import '../../../../../core/di/service_locator.dart';
 import '../../../../../core/responsiveness/app_responsive.dart';
 import '../../../../../core/text_styles/urbanist_text_style.dart';
 import '../../../../auth/data/data_sources/local/auth_local_data_source.dart';
+import '../../bloc/category/category_bloc.dart';
+import '../../bloc/category/category_state.dart';
 import '../../bloc/home_event.dart';
 import '../../bloc/wishlist/wishlist_bloc.dart';
 import '../../bloc/wishlist/wishlist_state.dart';
@@ -25,30 +29,23 @@ class _BookmarkPageState extends State<BookmarkPage> {
   int selectedIndex = 0;
   final authLocal = sl<AuthLocalDataSource>();
 
-  final List<String> options = [
-    '🔥 All',
-    '💡 3D Design',
-    '💰 Business',
-    '🎨 Design',
-  ];
-
-  Future<void> fetchProtectedData() async {
-    final tokens = await authLocal.getAuthToken();
-    final accessToken = tokens['access_token'];
-    if (accessToken != null && accessToken.isNotEmpty) {
-      print('access token: $accessToken');
-    } else {
-      print('Access token not found');
-    }
-  }
-
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    BlocProvider.of<WishlistBloc>(
-      context,
-    ).add(GetWishlistEvent(limit: 10, token: accsessToken));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadWishlist();
+    });
+    context.read<CategoryBloc>().add(GetCategoriesEvent(limit: 10));
+  }
+
+  Future<void> _loadWishlist() async {
+    final tokens = await authLocal.getAuthToken();
+    final accessToken = tokens['access_token'];
+
+    context.read<WishlistBloc>().add(
+      GetWishlistEvent(limit: 10, token: accessToken!),
+    );
+    LoggerService.error(accessToken);
   }
 
   @override
@@ -71,23 +68,59 @@ class _BookmarkPageState extends State<BookmarkPage> {
           children: [
             SizedBox(height: appH(10)),
             // ! Category check bar
-            SizedBox(
-              height: appH(40),
-              child: ListView.builder(
-                itemCount: options.length,
-                scrollDirection: Axis.horizontal,
-                itemBuilder:
-                    (context, index) => CustomChoiceChipWg(
-                      index: index,
-                      label: options[index],
-                      selectedIndex: selectedIndex,
-                      onSelected: (selected) {
-                        setState(() {
-                          selectedIndex = selected ? index : selectedIndex;
-                        });
+            BlocBuilder<CategoryBloc, CategoryState>(
+              builder: (context, state) {
+                if (state is CategoryLoading) {
+                  return SizedBox(
+                    height: 50,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: 4,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: EdgeInsets.only(right: appW(12)),
+                          child: Shimmer.fromColors(
+                            baseColor: Colors.grey[300]!,
+                            highlightColor: Colors.grey[100]!,
+                            child: Container(
+                              width: appW(90),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              padding: EdgeInsets.all(appW(8)),
+                            ),
+                          ),
+                        );
                       },
                     ),
-              ),
+                  );
+                } else if (state is CategoryLoaded) {
+                  final categories = state.categories;
+                  return SizedBox(
+                    height: appH(40),
+                    child: ListView.builder(
+                      itemCount: categories.count,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        return CustomChoiceChipWg(
+                          index: index,
+                          label: categories.results[index].name,
+                          selectedIndex: selectedIndex,
+                          onSelected: (selected) {
+                            setState(() {
+                              selectedIndex = selected ? index : selectedIndex;
+                            });
+                          },
+                        );
+                      },
+                    ),
+                  );
+                } else if (state is CategoryError) {
+                  return Center(child: Text('Ошибка: ${state.message}'));
+                }
+                return const SizedBox.shrink();
+              },
             ),
             // ! Category check bar
             Expanded(
@@ -103,17 +136,15 @@ class _BookmarkPageState extends State<BookmarkPage> {
                   } else if (state is WishlistLoaded) {
                     final courses = state.wishlistResponse;
                     return ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
                       itemCount: courses.count,
                       itemBuilder: (context, index) {
                         final course = courses.results[index];
                         return CourseCard(
                           onTap: () {},
-                          imagePath: course.courseImage!,
-                          category: "",
+                          imagePath: course.courseImage ?? 'Null',
+                          category: course.categoryName,
                           title: course.courseTitle,
-                          price: 0,
+                          price: double.parse(course.price),
                           oldPrice: 80,
                           rating: 4.8,
                           students: 8289,
