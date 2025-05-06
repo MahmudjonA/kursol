@@ -25,8 +25,14 @@ abstract class ApiUrls {
   static const String topMentors = 'mentors/top/?limit=';
 
   //! Search
-  static const String search = 'search/search/?q=';
+  static const String search = 'search/?q=';
 
   //! Wishlist
-  static const String wishlist = 'wishlist/?limit=';
+  static const String myWishlist = 'courses/my_wishlist/?limit=';
+  static const String addToWishlist = 'wishlist/';
+  static const String removeFromWishlistCourses = 'courses/';
+  static const String removeFromWishlist = "/wishlist/";
+
+  //! Notification
+  static const String notifications = 'notifications/';
 }

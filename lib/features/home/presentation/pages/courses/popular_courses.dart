@@ -29,7 +29,9 @@ class _PopularCoursesState extends State<PopularCourses> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    context.read<CourseBloc>().add(GetPopularCourses(limit: 10));
+    context.read<CourseBloc>().add(
+      GetPopularCourses(limit: 10, categoryId: null),
+    );
     context.read<CategoryBloc>().add(GetCategoriesEvent(limit: 10));
   }
 

@@ -14,7 +14,10 @@ class CourseBloc extends Bloc<HomeEvent, CourseState> {
   Future<void> onGetCourses(event, emit) async {
     emit(CourseLoading());
     try {
-      final courses = await getCoursesUseCase(limit: event.limit);
+      final courses = await getCoursesUseCase(
+        limit: event.limit,
+        categoryId: event.categoryId,
+      );
       emit(CourseLoaded(courses: courses));
     } catch (e) {
       emit(CourseError(message: e.toString()));

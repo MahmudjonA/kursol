@@ -8,24 +8,28 @@ class MessageWv extends StatelessWidget {
   final String imagePath;
   final String title;
   final String subtitle;
+  final bool isRead;
 
   const MessageWv({
     super.key,
     required this.title,
     required this.subtitle,
     required this.imagePath,
+    required this.isRead,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        // Handle tap action (e.g., mark as read)
+      },
       child: Container(
         margin: EdgeInsets.only(top: appH(24)),
         padding: EdgeInsets.only(left: appW(10)),
         height: appH(112),
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: isRead ? AppColors.white : AppColors.greyScale.grey100, // Different color for read/unread
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
@@ -40,18 +44,28 @@ class MessageWv extends StatelessWidget {
                   title, // Dynamic title
                   style: UrbanistTextStyles().bold(
                     fontSize: 18,
-                    color: AppColors.greyScale.grey900,
+                    color: isRead ? AppColors.greyScale.grey900 : AppColors.primary.blue500, // Change text color for unread
                   ),
                 ),
                 Text(
                   subtitle, // Dynamic subtitle
                   style: UrbanistTextStyles().medium(
                     fontSize: 14,
-                    color: AppColors.greyScale.grey700,
+                    color: isRead ? AppColors.greyScale.grey700 : AppColors.primary.blue500, // Subtitle color change
                   ),
                 ),
               ],
             ),
+            if (!isRead)
+              const Spacer(),
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: Icon(
+                  Icons.circle,
+                  color: AppColors.primary.blue500,
+                  size: 12,
+                ),
+              ),
           ],
         ),
       ),

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:lms_system/features/home/domain/entities/sections.dart';
 
 import '../../../../../../core/common/colors/app_colors.dart';
 import '../../../../../../core/text_styles/urbanist_text_style.dart';
+import 'course_lesson_wg.dart';
 
 class LessonScreen extends StatefulWidget {
-  const LessonScreen({super.key});
+  final List<Section> sections;
+
+  const LessonScreen({super.key, required this.sections});
 
   @override
   State<LessonScreen> createState() => _LessonScreenState();
@@ -23,7 +27,7 @@ class _LessonScreenState extends State<LessonScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '124 Lessons',
+                  "${widget.sections[0].lessons.length} Lessons",
                   style: UrbanistTextStyles().bold(
                     fontSize: 20,
                     color: AppColors.black,
@@ -33,17 +37,14 @@ class _LessonScreenState extends State<LessonScreen> {
                   child: Text(
                     'See All',
                     style: UrbanistTextStyles().bold(
-                      fontSize: 20,
+                      fontSize: 18,
                       color: AppColors.blue,
                     ),
                   ),
                 ),
               ],
             ),
-            // CourseLessonWidget(
-            //   // sections: courseDetail,
-            //   isDarkMode: isDarkMode,
-            // ),
+            CourseLessonWidget(section: widget.sections),
           ],
         ),
       ),

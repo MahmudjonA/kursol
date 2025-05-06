@@ -2,21 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart' show SpinKitFadingCircle;
 import 'package:iconly/iconly.dart';
-import 'package:lms_system/core/utils/logger.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../../../core/common/colors/app_colors.dart';
 import '../../../../../core/common/widgets/app_bar/action_app_bar_wg.dart';
 import '../../../../../core/common/widgets/custom_choice_chip_wg.dart';
-import '../../../../../core/di/service_locator.dart';
 import '../../../../../core/responsiveness/app_responsive.dart';
+import '../../../../../core/route/rout_generator.dart';
 import '../../../../../core/text_styles/urbanist_text_style.dart';
-import '../../../../auth/data/data_sources/local/auth_local_data_source.dart';
 import '../../bloc/category/category_bloc.dart';
 import '../../bloc/category/category_state.dart';
 import '../../bloc/home_event.dart';
 import '../../bloc/wishlist/wishlist_bloc.dart';
 import '../../bloc/wishlist/wishlist_state.dart';
 import '../../widgets/course_card_widget.dart';
+import '../course_details/course_details_page.dart';
 
 class BookmarkPage extends StatefulWidget {
   const BookmarkPage({super.key});
@@ -26,26 +25,14 @@ class BookmarkPage extends StatefulWidget {
 }
 
 class _BookmarkPageState extends State<BookmarkPage> {
-  int selectedIndex = 0;
-  final authLocal = sl<AuthLocalDataSource>();
+  int selectedIndex = -1;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadWishlist();
-    });
+
+    context.read<WishlistBloc>().add(GetWishlistEvent(limit: 10));
     context.read<CategoryBloc>().add(GetCategoriesEvent(limit: 10));
-  }
-
-  Future<void> _loadWishlist() async {
-    final tokens = await authLocal.getAuthToken();
-    final accessToken = tokens['access_token'];
-
-    context.read<WishlistBloc>().add(
-      GetWishlistEvent(limit: 10, token: accessToken!),
-    );
-    LoggerService.error(accessToken);
   }
 
   @override
@@ -67,7 +54,6 @@ class _BookmarkPageState extends State<BookmarkPage> {
         child: Column(
           children: [
             SizedBox(height: appH(10)),
-            // ! Category check bar
             BlocBuilder<CategoryBloc, CategoryState>(
               builder: (context, state) {
                 if (state is CategoryLoading) {
@@ -100,19 +86,43 @@ class _BookmarkPageState extends State<BookmarkPage> {
                   return SizedBox(
                     height: appH(40),
                     child: ListView.builder(
-                      itemCount: categories.count,
                       scrollDirection: Axis.horizontal,
+                      itemCount: categories.count + 1,
                       itemBuilder: (context, index) {
-                        return CustomChoiceChipWg(
-                          index: index,
-                          label: categories.results[index].name,
-                          selectedIndex: selectedIndex,
-                          onSelected: (selected) {
-                            setState(() {
-                              selectedIndex = selected ? index : selectedIndex;
-                            });
-                          },
-                        );
+                        if (index == 0) {
+                          return CustomChoiceChipWg(
+                            index: -1,
+                            label: 'All',
+                            selectedIndex: selectedIndex,
+                            onSelected: (selected) {
+                              setState(() {
+                                selectedIndex = selected ? -1 : selectedIndex;
+                              });
+                              context.read<WishlistBloc>().add(
+                                GetWishlistEvent(limit: 10),
+                              );
+                            },
+                          );
+                        } else {
+                          final category = categories.results[index - 1];
+                          return CustomChoiceChipWg(
+                            index: index - 1,
+                            label: category.name,
+                            selectedIndex: selectedIndex,
+                            onSelected: (selected) {
+                              setState(() {
+                                selectedIndex =
+                                    selected ? index - 1 : selectedIndex;
+                              });
+                              context.read<WishlistBloc>().add(
+                                GetWishlistEvent(
+                                  limit: 10,
+                                  categoryId: category.id,
+                                ),
+                              );
+                            },
+                          );
+                        }
                       },
                     ),
                   );
@@ -122,7 +132,6 @@ class _BookmarkPageState extends State<BookmarkPage> {
                 return const SizedBox.shrink();
               },
             ),
-            // ! Category check bar
             Expanded(
               child: BlocBuilder<WishlistBloc, WishlistState>(
                 builder: (context, state) {
@@ -140,14 +149,18 @@ class _BookmarkPageState extends State<BookmarkPage> {
                       itemBuilder: (context, index) {
                         final course = courses.results[index];
                         return CourseCard(
-                          onTap: () {},
-                          imagePath: course.courseImage ?? 'Null',
-                          category: course.categoryName,
-                          title: course.courseTitle,
+                          onTap: () {
+                            AppRoute.go(CourseDetailsPage(id: course.id));
+                          },
+                          imagePath: course.image ?? 'Null',
+                          category: course.categoryName!,
+                          title: course.title,
                           price: double.parse(course.price),
                           oldPrice: 80,
                           rating: 4.8,
                           students: 8289,
+                          isInWishlist: true,
+                          courseId: course.id,
                           onBookmarkPressed: () {},
                         );
                       },
@@ -199,6 +212,7 @@ class _BookmarkPageState extends State<BookmarkPage> {
                 oldPrice: 80,
                 rating: 4.8,
                 students: 8289,
+                isInWishlist: true,
                 onBookmarkPressed: () {},
               ),
               SizedBox(height: appH(20)),

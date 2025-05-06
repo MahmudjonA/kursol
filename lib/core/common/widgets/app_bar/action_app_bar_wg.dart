@@ -43,10 +43,7 @@ class ActionAppBarWg extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: actions,
       flexibleSpace: Container(
-        decoration: BoxDecoration(
-          color: AppColors.white,
-
-        ),
+        decoration: BoxDecoration(color: AppColors.white),
       ),
     );
   }

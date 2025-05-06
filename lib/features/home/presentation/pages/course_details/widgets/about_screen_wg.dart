@@ -38,14 +38,16 @@ class _AboutScreenState extends State<AboutScreen> {
             },
             child: ListTile(
               leading: CircleAvatar(
-                child: Image(
-                  image: AssetImage('assets/images/mentor_avatar.png'),
+                child: Icon(
+                  IconlyBold.user_3,
+                  size: 30,
+                  color: AppColors.white,
                 ),
               ),
               title: Text(
                 widget.course.instructor,
                 style: UrbanistTextStyles().bold(
-                  fontSize: 22,
+                  fontSize: 19,
                   color: AppColors.black,
                 ),
               ),
@@ -68,15 +70,7 @@ class _AboutScreenState extends State<AboutScreen> {
           ),
           const SizedBox(height: 10),
           Text(
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip. ",
-            style: UrbanistTextStyles().bold(
-              fontSize: 16,
-              color: AppColors.greyScale.grey500,
-            ),
-          ),
-          SizedBox(height: 10),
-          Text(
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip. ",
+            widget.course.description,
             style: UrbanistTextStyles().bold(
               fontSize: 16,
               color: AppColors.greyScale.grey500,

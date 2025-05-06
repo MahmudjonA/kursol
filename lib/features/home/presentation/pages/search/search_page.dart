@@ -11,6 +11,7 @@ import '../../../../../core/common/widgets/custom_choice_chip_wg.dart';
 import '../../../../../core/responsiveness/app_responsive.dart';
 import '../../../../../core/route/rout_generator.dart';
 import '../../../../../core/text_styles/urbanist_text_style.dart';
+import '../../../data/data_sources/local/search_history_service.dart';
 import '../../bloc/search/search_bloc.dart';
 import '../../bloc/search/search_state.dart';
 
@@ -39,6 +40,7 @@ class _SearchPageState extends State<SearchPage> {
   int selectedRatingIndex = 0;
 
   final List<String> optionsRating = ['All', '5', '4', '3', '2', '1'];
+  final _searchHistoryService = SearchHistoryService();
 
   @override
   void dispose() {
@@ -52,6 +54,7 @@ class _SearchPageState extends State<SearchPage> {
       _query = query;
       _isFocused = false;
     });
+    _searchHistoryService.addQuery(query);
     context.read<SearchBloc>().add(SearchEvent(query: query));
   }
 

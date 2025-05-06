@@ -1,5 +1,5 @@
 import 'package:lms_system/features/home/domain/entities/response_wishlist.dart';
-import '../../domain/entities/wishlist.dart';
+import 'course_model.dart';
 
 class ResponseWishlistModel extends WishlistResponse {
   ResponseWishlistModel({
@@ -16,7 +16,7 @@ class ResponseWishlistModel extends WishlistResponse {
       previous: json['previous'],
       results:
           (json['results'] as List)
-              .map((item) => Wishlist.fromJson(item))
+              .map((e) => CourseModel.fromJson(e))
               .toList(),
     );
   }

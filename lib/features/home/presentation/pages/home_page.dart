@@ -6,7 +6,6 @@ import 'package:lms_system/features/home/presentation/bloc/category/category_blo
 import 'package:lms_system/features/home/presentation/bloc/top_mentors/top_mentors_state.dart';
 import 'package:lms_system/features/home/presentation/pages/courses/popular_courses.dart';
 import 'package:lms_system/features/home/presentation/pages/mentors/mentors_page.dart';
-import 'package:lms_system/features/home/presentation/pages/notification/notification_page.dart';
 import 'package:lms_system/features/home/presentation/pages/search/search_page.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../../core/common/colors/app_colors.dart';
@@ -31,7 +30,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int selectedIndex = 0;
+  int selectedIndex = -1;
 
   @override
   void initState() {
@@ -55,7 +54,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             CircleAvatar(
               radius: appH(30),
-              backgroundImage: AssetImage('assets/images/boy.png'),
+              backgroundImage: AssetImage('assets/images/logo.png'),
             ),
             SizedBox(width: appW(10)),
             Column(
@@ -63,7 +62,7 @@ class _HomePageState extends State<HomePage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Good Morning 👋',
+                  'Hello, User',
                   style: UrbanistTextStyles().medium(
                     color: AppColors.greyScale.grey600,
                     fontSize: 18,
@@ -71,7 +70,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 SizedBox(height: appH(10)),
                 Text(
-                  'Andrew Ainsley',
+                  'LMS System',
                   style: UrbanistTextStyles().semiBold(
                     color: AppColors.greyScale.grey900,
                     fontSize: 22,
@@ -82,12 +81,12 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         actions: [
-          IconButton(
-            icon: Icon(IconlyLight.notification, size: appH(28)),
-            onPressed: () {
-              AppRoute.go(NotificationPage());
-            },
-          ),
+          // IconButton(
+          //   icon: Icon(IconlyLight.notification, size: appH(28)),
+          //   onPressed: () {
+          //     AppRoute.go(NotificationPage());
+          //   },
+          // ),
           IconButton(
             icon: Icon(IconlyLight.bookmark, size: appH(28)),
             onPressed: () {
@@ -300,20 +299,43 @@ class _HomePageState extends State<HomePage> {
                     return SizedBox(
                       height: appH(40),
                       child: ListView.builder(
-                        itemCount: categories.count,
                         scrollDirection: Axis.horizontal,
+                        itemCount: categories.count + 1,
                         itemBuilder: (context, index) {
-                          return CustomChoiceChipWg(
-                            index: index,
-                            label: categories.results[index].name,
-                            selectedIndex: selectedIndex,
-                            onSelected: (selected) {
-                              setState(() {
-                                selectedIndex =
-                                    selected ? index : selectedIndex;
-                              });
-                            },
-                          );
+                          if (index == 0) {
+                            return CustomChoiceChipWg(
+                              index: -1,
+                              label: 'All',
+                              selectedIndex: selectedIndex,
+                              onSelected: (selected) {
+                                setState(() {
+                                  selectedIndex = selected ? -1 : selectedIndex;
+                                });
+                                context.read<CourseBloc>().add(
+                                  GetPopularCourses(limit: 10),
+                                );
+                              },
+                            );
+                          } else {
+                            final category = categories.results[index - 1];
+                            return CustomChoiceChipWg(
+                              index: index - 1,
+                              label: category.name,
+                              selectedIndex: selectedIndex,
+                              onSelected: (selected) {
+                                setState(() {
+                                  selectedIndex =
+                                      selected ? index - 1 : selectedIndex;
+                                });
+                                context.read<CourseBloc>().add(
+                                  GetPopularCourses(
+                                    limit: 10,
+                                    categoryId: category.id,
+                                  ),
+                                );
+                              },
+                            );
+                          }
                         },
                       ),
                     );
@@ -371,6 +393,8 @@ class _HomePageState extends State<HomePage> {
                           oldPrice: 80,
                           rating: 4.8,
                           students: 8289,
+                          isInWishlist: course.isInWishlist,
+                          courseId: course.id,
                           onBookmarkPressed: () {},
                         );
                       },

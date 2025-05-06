@@ -6,7 +6,10 @@ class WishlistUseCase {
 
   WishlistUseCase(this.homeRepo);
 
-  Future<WishlistResponse> call({required int limit,required String token}) async {
-    return await homeRepo.getWishlist(limit: limit, token: token);
+  Future<WishlistResponse> call({
+    required int limit,
+    required int? categoryId,
+  }) async {
+    return await homeRepo.getWishlist(limit: limit, categoryId: categoryId);
   }
 }

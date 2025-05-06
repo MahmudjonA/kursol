@@ -1,5 +1,7 @@
+import 'package:dio/dio.dart';
 import '../../../../../core/common/api_urls.dart';
 import '../../../../../core/network/dio_client.dart';
+import '../../../../../core/network/dio_exception_handler.dart';
 import '../../../../../core/utils/logger.dart';
 import '../../models/auth_token_model.dart';
 import '../../models/register_model.dart';
@@ -26,6 +28,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         LoggerService.warning("Registration failed: ${response.statusCode}");
         throw Exception('Registration failed: ${response.statusCode}');
       }
+    } on DioException catch (dioError) {
+      throw DioExceptionHandler.handle(dioError); // 🧠 используем утилиту
     } catch (e) {
       LoggerService.error('Error during user registration: $e');
       rethrow;
@@ -45,6 +49,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         LoggerService.info('Email confirmation successful: ${response.data}');
+        dioClient.setToken(response.data['access']);
+        LoggerService.info(
+          'Token set successfully: ${response.data['access']}',
+        );
         return AuthTokenModel.fromJson(response.data);
       } else {
         LoggerService.warning(
@@ -52,6 +60,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         );
         throw Exception('Email confirmation failed: ${response.statusCode}');
       }
+    } on DioException catch (dioError) {
+      throw DioExceptionHandler.handle(dioError); // 🧠 используем утилиту
     } catch (e) {
       LoggerService.error('Error during email confirmation: $e');
       rethrow;
@@ -70,13 +80,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         LoggerService.info('Login successful: ${response.data}');
+        dioClient.setToken(response.data['access']);
+        LoggerService.info(
+          'Token set successfully: ${response.data['access']}',
+        );
         return AuthTokenModel.fromJson(response.data);
       } else {
         LoggerService.warning("Login failed: ${response.statusCode}");
         throw Exception('Login failed: ${response.statusCode}');
       }
+    } on DioException catch (dioError) {
+      throw DioExceptionHandler.handle(dioError); // 🧠 используем утилиту
     } catch (e) {
-      LoggerService.error('Error during user login: $e');
+      LoggerService.error('Unexpected error during user login: $e');
       rethrow;
     }
   }
@@ -97,6 +113,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         LoggerService.warning("Password reset failed: ${response.statusCode}");
         throw Exception('Password reset failed: ${response.statusCode}');
       }
+    } on DioException catch (dioError) {
+      throw DioExceptionHandler.handle(dioError); // 🧠 используем утилиту
     } catch (e) {
       LoggerService.error('Error during password reset: $e');
       rethrow;
@@ -124,6 +142,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'Failed to create new password: ${response.statusCode}',
         );
       }
+    } on DioException catch (dioError) {
+      throw DioExceptionHandler.handle(dioError); // 🧠 используем утилиту
     } catch (e) {
       LoggerService.error('Error during new password creation: $e');
       rethrow;
@@ -143,6 +163,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         LoggerService.warning("Logout failed: ${response.statusCode}");
         throw Exception('Logout failed: ${response.statusCode}');
       }
+    } on DioException catch (dioError) {
+      throw DioExceptionHandler.handle(dioError); // 🧠 используем утилиту
     } catch (e) {
       LoggerService.error('Error during new password creation: $e');
       rethrow;

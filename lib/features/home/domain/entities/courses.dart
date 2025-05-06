@@ -11,12 +11,14 @@ class Course {
   final bool isPublished;
   final String createdAt;
   final String instructor;
+  final bool isInWishlist;
   final List<Section> sections;
 
   Course({
     required this.id,
     required this.title,
     required this.description,
+    required this.isInWishlist,
     this.category,
     this.categoryName,
     required this.price,

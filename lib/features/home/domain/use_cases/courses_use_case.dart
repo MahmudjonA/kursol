@@ -7,7 +7,13 @@ class CoursesUseCase {
 
   CoursesUseCase(this.coursesRepository);
 
-  Future<CourseResponse> call({required int limit}) async {
-    return await coursesRepository.getPopularCourses(limit: limit);
+  Future<CourseResponse> call({
+    required int limit,
+    required int? categoryId,
+  }) async {
+    return await coursesRepository.getPopularCourses(
+      limit: limit,
+      categoryId: categoryId,
+    );
   }
 }

@@ -1,15 +1,18 @@
-import 'package:lms_system/features/home/domain/entities/courses.dart';
+import 'notification.dart';
 
-class WishlistResponse {
+class NotificationResponse {
   final int count;
   final String? next;
   final String? previous;
-  final List<Course> results;
+  final List<Notification> results;
 
-  WishlistResponse({
+  NotificationResponse({
     required this.count,
     this.next,
     this.previous,
     required this.results,
   });
+
+
 }
+

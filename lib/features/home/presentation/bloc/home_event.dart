@@ -5,8 +5,9 @@ abstract class HomeEvent {
 // ! Courses
 class GetPopularCourses extends HomeEvent {
   final int limit;
+  final int? categoryId;
 
-  GetPopularCourses({required this.limit});
+  GetPopularCourses({required this.limit, this.categoryId});
 }
 
 class GetSingleCourseEvent extends HomeEvent {
@@ -39,13 +40,31 @@ class GetMentors extends HomeEvent {
 
 class GetWishlistEvent extends HomeEvent {
   final int limit;
-  final String token;
+  final int? categoryId;
 
-  GetWishlistEvent({required this.limit, required this.token});
+  GetWishlistEvent({required this.limit,  this.categoryId});
 }
+
+class AddToWishlistEvent extends HomeEvent {
+  final int courseId;
+
+  AddToWishlistEvent({required this.courseId});
+}
+
+class RemoveFromWishlistEvent extends HomeEvent {
+  final int courseId;
+
+  RemoveFromWishlistEvent({required this.courseId});
+}
+
 // ! Search
 class SearchEvent extends HomeEvent {
   final String query;
 
   SearchEvent({required this.query});
+}
+
+// ! Notification
+class GetNotificationEvent extends HomeEvent {
+  const GetNotificationEvent();
 }

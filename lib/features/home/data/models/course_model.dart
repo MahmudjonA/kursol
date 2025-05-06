@@ -14,6 +14,7 @@ class CourseModel extends Course {
     required super.category,
     required super.categoryName,
     required super.image,
+    required super.isInWishlist,
   });
 
   factory CourseModel.fromJson(Map<String, dynamic> json) {
@@ -28,6 +29,7 @@ class CourseModel extends Course {
       isPublished: json['is_published'] ?? false,
       createdAt: json['created_at'] ?? '',
       instructor: json['instructor'] ?? '',
+      isInWishlist: json['is_in_wishlist'] ?? false,
       sections:
           (json['sections'] as List?)
               ?.map((e) => Section.fromJson(e))

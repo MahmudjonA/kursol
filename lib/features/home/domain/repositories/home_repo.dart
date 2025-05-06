@@ -5,9 +5,15 @@ import 'package:lms_system/features/home/domain/entities/response_mentor.dart';
 import 'package:lms_system/features/home/domain/entities/response_wishlist.dart';
 import 'package:lms_system/features/home/domain/entities/search_response.dart';
 
+import '../entities/lessons_response.dart';
+import '../entities/notification_response.dart';
+
 abstract class HomeRepo {
   //! Courses
-  Future<CourseResponse> getPopularCourses({required int limit});
+  Future<CourseResponse> getPopularCourses({
+    required int limit,
+    required int? categoryId,
+  });
 
   Future<Course> getSingleCourses({required int id});
 
@@ -25,6 +31,16 @@ abstract class HomeRepo {
   //! Wishlist
   Future<WishlistResponse> getWishlist({
     required int limit,
-    required String token,
+    required int? categoryId,
   });
+
+  Future<void> addToWishlist({required int courseId});
+
+  Future<void> removeFromWishlist({required int courseId});
+
+  //! Notification
+  Future<NotificationResponse> getNotifications();
+
+  //! Lessons
+  // Future<LessonsResponse> getLessons({required int courseId});
 }

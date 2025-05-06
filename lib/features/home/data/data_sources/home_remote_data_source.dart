@@ -5,10 +5,14 @@ import 'package:lms_system/features/home/data/models/response_wishlist_model.dar
 import 'package:lms_system/features/home/data/models/search_response_model.dart';
 
 import '../models/category_response_model.dart';
+import '../models/notification_response_model.dart';
 
 abstract class HomeRemoteDataSource {
   //! Courses
-  Future<CoursesResponseModel> getPopularCourses({required int limit});
+  Future<CoursesResponseModel> getPopularCourses({
+    required int limit,
+    required int? categoryId,
+  });
 
   Future<CourseModel> getSingleCourses({required int id});
 
@@ -24,5 +28,15 @@ abstract class HomeRemoteDataSource {
   Future<SearchResponseModel> search({required String query});
 
   //! Wishlist
-  Future<ResponseWishlistModel> getWishlist({required int limit, required String token});
+  Future<ResponseWishlistModel> getWishlist({
+    required int limit,
+    required int? categoryId,
+  });
+
+  Future<void> addToWishlist({required int courseId});
+
+  Future<void> removeFromWishlist({required int courseId});
+
+  //! Notification
+  Future<NotificationResponseModel> getNotifications();
 }
