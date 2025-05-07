@@ -40,8 +40,8 @@ class ProfilePage extends StatelessWidget {
                 onEdit: () {
                   AppRoute.go(EditProfilePage());
                 },
-                name: "Iftixor Rustamov",
-                gmail: "iftixorrustamovv@gmail.com",
+                name: "User Name",
+                gmail: "example@gmail.com",
                 image: "assets/images/profile.png",
               ),
               Divider(height: 1, color: AppColors.greyScale.grey200),

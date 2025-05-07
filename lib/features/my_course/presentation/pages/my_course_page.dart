@@ -44,7 +44,7 @@ class _MyCoursePageState extends State<MyCoursePage>
                 children: [
                   ListView.builder(
                     padding: const EdgeInsets.all(8.0),
-                    itemCount: 5,
+                    itemCount: 1,
                     itemBuilder: (context, index) {
                       return CourseCard(
                         onTap: () {
@@ -65,7 +65,7 @@ class _MyCoursePageState extends State<MyCoursePage>
                   ),
                   ListView.builder(
                     padding: const EdgeInsets.all(8.0),
-                    itemCount: 5,
+                    itemCount: 0,
                     itemBuilder: (context, index) {
                       return CourseCard(
                         onTap: () {},

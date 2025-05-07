@@ -23,7 +23,7 @@ class TransactionsPage extends StatelessWidget {
         child: Expanded(
           child: ListView.builder(
             padding: EdgeInsets.only(top: appH(44)),
-            itemCount: 7, // dummy code
+            itemCount: 1, // dummy code
             itemBuilder: (context, index) => TransactionsCardWg(
               onTap: () {},
               onButtonPressed: () {
