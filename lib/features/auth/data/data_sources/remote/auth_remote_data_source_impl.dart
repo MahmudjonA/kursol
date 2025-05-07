@@ -29,7 +29,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw Exception('Registration failed: ${response.statusCode}');
       }
     } on DioException catch (dioError) {
-      throw DioExceptionHandler.handle(dioError); // 🧠 используем утилиту
+      throw DioExceptionHandler.handle(dioError);
     } catch (e) {
       LoggerService.error('Error during user registration: $e');
       rethrow;

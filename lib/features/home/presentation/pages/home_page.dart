@@ -157,10 +157,13 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Image.asset('assets/images/Frame.png', fit: BoxFit.cover),
                     Image.asset(
-                      'assets/images/discounts.png',
+                      'assets/images/green_offer.png',
                       fit: BoxFit.cover,
                     ),
-                    Image.asset('assets/images/offer.png', fit: BoxFit.cover),
+                    Image.asset(
+                      'assets/images/red_offer.png',
+                      fit: BoxFit.cover,
+                    ),
                   ],
                 ),
               ),

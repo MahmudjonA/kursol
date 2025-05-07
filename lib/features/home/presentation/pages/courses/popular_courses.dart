@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:iconly/iconly.dart';
 import 'package:lms_system/core/route/rout_generator.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../../../../core/common/colors/app_colors.dart';
 import '../../../../../core/common/widgets/app_bar/action_app_bar_wg.dart';
 import '../../../../../core/common/widgets/custom_choice_chip_wg.dart';
@@ -23,7 +24,7 @@ class PopularCourses extends StatefulWidget {
 }
 
 class _PopularCoursesState extends State<PopularCourses> {
-  int selectedIndex = 0;
+  int selectedIndex = -1;
 
   @override
   void initState() {
@@ -60,10 +61,28 @@ class _PopularCoursesState extends State<PopularCourses> {
               BlocBuilder<CategoryBloc, CategoryState>(
                 builder: (context, state) {
                   if (state is CategoryLoading) {
-                    return Center(
-                      child: SpinKitFadingCircle(
-                        color: AppColors.white,
-                        size: 60.0,
+                    return SizedBox(
+                      height: 50,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 4,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: EdgeInsets.only(right: appW(12)),
+                            child: Shimmer.fromColors(
+                              baseColor: Colors.grey[300]!,
+                              highlightColor: Colors.grey[100]!,
+                              child: Container(
+                                width: appW(90),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: EdgeInsets.all(appW(8)),
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     );
                   } else if (state is CategoryLoaded) {
@@ -71,20 +90,43 @@ class _PopularCoursesState extends State<PopularCourses> {
                     return SizedBox(
                       height: appH(40),
                       child: ListView.builder(
-                        itemCount: categories.count,
                         scrollDirection: Axis.horizontal,
+                        itemCount: categories.count + 1,
                         itemBuilder: (context, index) {
-                          return CustomChoiceChipWg(
-                            index: index,
-                            label: categories.results[index].name,
-                            selectedIndex: selectedIndex,
-                            onSelected: (selected) {
-                              setState(() {
-                                selectedIndex =
-                                    selected ? index : selectedIndex;
-                              });
-                            },
-                          );
+                          if (index == 0) {
+                            return CustomChoiceChipWg(
+                              index: -1,
+                              label: 'All',
+                              selectedIndex: selectedIndex,
+                              onSelected: (selected) {
+                                setState(() {
+                                  selectedIndex = selected ? -1 : selectedIndex;
+                                });
+                                context.read<CourseBloc>().add(
+                                  GetPopularCourses(limit: 10),
+                                );
+                              },
+                            );
+                          } else {
+                            final category = categories.results[index - 1];
+                            return CustomChoiceChipWg(
+                              index: index - 1,
+                              label: category.name,
+                              selectedIndex: selectedIndex,
+                              onSelected: (selected) {
+                                setState(() {
+                                  selectedIndex =
+                                      selected ? index - 1 : selectedIndex;
+                                });
+                                context.read<CourseBloc>().add(
+                                  GetPopularCourses(
+                                    limit: 10,
+                                    categoryId: category.id,
+                                  ),
+                                );
+                              },
+                            );
+                          }
                         },
                       ),
                     );
@@ -94,15 +136,33 @@ class _PopularCoursesState extends State<PopularCourses> {
                   return const SizedBox.shrink();
                 },
               ),
-
               SizedBox(height: appH(8)),
               BlocBuilder<CourseBloc, CourseState>(
                 builder: (context, state) {
                   if (state is CourseLoading) {
-                    return Center(
-                      child: SpinKitFadingCircle(
-                        color: AppColors.primary.blue500,
-                        size: 60.0,
+                    return SizedBox(
+                      height: 320,
+                      child: ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        itemCount: 4,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: EdgeInsets.only(top: appW(12)),
+                            child: Shimmer.fromColors(
+                              baseColor: Colors.grey[300]!,
+                              highlightColor: Colors.grey[100]!,
+                              child: Container(
+                                height: appH(120),
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: EdgeInsets.all(appW(8)),
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     );
                   } else if (state is CourseLoaded) {
@@ -118,12 +178,14 @@ class _PopularCoursesState extends State<PopularCourses> {
                             AppRoute.go(CourseDetailsPage(id: course.id));
                           },
                           imagePath: course.image!,
-                          category: course.category.toString(),
+                          category: course.categoryName!,
                           title: course.title,
                           price: double.tryParse(course.price) ?? 0,
                           oldPrice: 80,
                           rating: 4.8,
                           students: 8289,
+                          isInWishlist: course.isInWishlist,
+                          courseId: course.id,
                           onBookmarkPressed: () {},
                         );
                       },

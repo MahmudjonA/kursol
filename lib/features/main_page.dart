@@ -50,14 +50,14 @@ class _MainPageState extends State<MainPage> {
 
   List<Widget> pages = [
     const HomePage(),
-    // const MyCoursePage(),
-    // const TestPage(),
-    // const TransactionsPage(),
-    // const ProfilePage(),
-    InProgressPage(),
-    InProgressPage(),
-    InProgressPage(),
-    InProgressPage(),
+    const MyCoursePage(),
+    const TestPage(),
+    const TransactionsPage(),
+    const ProfilePage(),
+    // InProgressPage(),
+    // InProgressPage(),
+    // InProgressPage(),
+    // InProgressPage(),
   ];
 
   void goOtherTab(int index) {

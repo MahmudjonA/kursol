@@ -1,22 +1,30 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
-
 import '../utils/logger.dart';
 
 class DioExceptionHandler {
   static Exception handle(DioException dioError) {
     if (dioError.type == DioExceptionType.connectionError ||
-        (dioError.type == DioExceptionType.unknown && dioError.error is SocketException)) {
+        (dioError.type == DioExceptionType.unknown &&
+            dioError.error is SocketException)) {
       LoggerService.error('No internet connection');
       return Exception('No internet connection');
     }
 
     final statusCode = dioError.response?.statusCode;
+    final data = dioError.response?.data;
+
+    String? readableMessage;
+    if (data is Map<String, dynamic>) {
+      readableMessage = data.values.first.toString();
+    } else if (data is String) {
+      readableMessage = data;
+    }
 
     switch (statusCode) {
       case 400:
-        LoggerService.warning('Invalid credentials');
-        return Exception('Invalid email or password');
+        LoggerService.warning('Bad request: $readableMessage');
+        return Exception(readableMessage ?? 'Invalid email or password');
       case 401:
         LoggerService.warning('Unauthorized');
         return Exception('Unauthorized: please check your credentials');
@@ -31,7 +39,9 @@ class DioExceptionHandler {
         return Exception('Server error. Please try again later');
       default:
         LoggerService.error('Dio error: ${dioError.message}');
-        return Exception('Something went wrong: ${dioError.message}');
+        return Exception(
+          readableMessage ?? 'Something went wrong: ${dioError.message}',
+        );
     }
   }
 }
