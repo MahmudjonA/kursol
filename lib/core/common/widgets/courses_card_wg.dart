@@ -57,7 +57,7 @@ class CourseCard extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ),
-            const SizedBox(width: 16),
+            SizedBox(width: appW(16)),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,7 +86,7 @@ class CourseCard extends StatelessWidget {
                         progressColor: AppColors.amber,
                         barRadius: const Radius.circular(12),
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: appW(8)),
                       Text(
                         courseDuration,
                         style: AppTextStyles.urbanist.bold(

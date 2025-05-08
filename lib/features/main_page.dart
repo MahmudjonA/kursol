@@ -6,7 +6,6 @@ import 'package:lms_system/features/transaction/presentation/pages/transactions_
 import '../core/common/colors/app_colors.dart';
 import '../core/responsiveness/app_responsive.dart';
 import '../core/text_styles/app_tex_style.dart';
-import 'in_progress.dart';
 import 'my_course/presentation/pages/my_course_page.dart';
 import 'home/presentation/pages/home_page.dart';
 
@@ -54,10 +53,6 @@ class _MainPageState extends State<MainPage> {
     const TestPage(),
     const TransactionsPage(),
     const ProfilePage(),
-    // InProgressPage(),
-    // InProgressPage(),
-    // InProgressPage(),
-    // InProgressPage(),
   ];
 
   void goOtherTab(int index) {
