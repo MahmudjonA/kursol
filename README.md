@@ -2,7 +2,6 @@
 
 A modern **Flutter-based Learning Management System (LMS)** designed to deliver high-quality online education experiences. Built using clean architecture principles and inspired by a sleek UI design from [Figma](https://www.figma.com/design/bwANox5zsU0HBX30EiBwmk/Bahodir---Online-Course---E-Learning-App-UI-Kit--Community-?node-id=727-25421&p=f&t=ugkKnmvcEogRW768-0).
 
-![UI Preview](https://your-image-link-if-any.png)
 
 ---
 
