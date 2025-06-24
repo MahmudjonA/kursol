@@ -31,7 +31,6 @@ A modern **Flutter-based Learning Management System (LMS)** designed to deliver 
 | Dio + Logger      | HTTP client & logging            |
 | Bloc              | State management                 |
 | Easy Localization | Multi-language support           |
-| Go Router         | Routing solution                 |
 | Figma             | UI Design inspiration            |
 
 ---
@@ -55,7 +54,6 @@ Some major packages in use:
 
 * `flutter_bloc`
 * `get_it`
-* `go_router`
 * `dio` + `pretty_dio_logger`
 * `flutter_pdfview`
 * `permission_handler`
