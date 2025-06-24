@@ -16,7 +16,6 @@ A modern **Flutter-based Learning Management System (LMS)** designed to deliver 
 - 🔒 Biometric authentication
 - 📷 Profile photo uploading
 - 📁 Offline storage (Hive & GetStorage)
-- 🧭 Smooth navigation using `go_router`
 - 📦 Clean architecture using `flutter_bloc` & `get_it`
 - 🌐 API requests via Dio with pretty logging
 - ✨ Caching, shimmer effects, and SVG support
